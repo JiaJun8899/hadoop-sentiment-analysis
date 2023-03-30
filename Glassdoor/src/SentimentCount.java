@@ -28,7 +28,8 @@ public class SentimentCount {
 		ChainMapper.addMapper(job, SentimentValidationMapper.class, LongWritable.class, Text.class, LongWritable.class,Text.class, validationConf);
 
 		Configuration ansConf = new Configuration(false);
-		ChainMapper.addMapper(job, SentimentMapper.class, LongWritable.class, Text.class, Text.class, IntWritable.class,ansConf);
+		ansConf.set("mapred.textoutputformat.separator", ",");
+		ChainMapper.addMapper(job, SentimentMapper.class, LongWritable.class, Text.class, Text.class, Text.class,ansConf);
 
 		job.setMapperClass(ChainMapper.class);
 

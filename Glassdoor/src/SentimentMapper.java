@@ -8,11 +8,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 
-public class SentimentMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+public class SentimentMapper extends Mapper<LongWritable, Text, Text, Text> {
 	Hashtable<String, Integer> wordTable = new Hashtable<>();
 
 	@Override
-	protected void setup(Mapper<LongWritable, Text, Text, IntWritable>.Context context) throws IOException, InterruptedException {
+	protected void setup(Mapper<LongWritable, Text, Text, Text>.Context context) throws IOException, InterruptedException {
 		BufferedReader br = new BufferedReader(new FileReader("AFINN.tsv"));
 		String line = null;
 
@@ -41,7 +41,7 @@ public class SentimentMapper extends Mapper<LongWritable, Text, Text, IntWritabl
 	}
 
 	@Override
-	protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, Text, IntWritable>.Context context) throws IOException, InterruptedException {
+	protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, Text, Text>.Context context) throws IOException, InterruptedException {
 		String[] parts = value.toString().split(",");
 		String pros = parts[3];
 		String cons = parts[4];
@@ -64,7 +64,7 @@ public class SentimentMapper extends Mapper<LongWritable, Text, Text, IntWritabl
 					intVal += wordTable.get(con);
 				}
 			}
-			context.write(value, new IntWritable(intVal));
+			context.write(new Text(value.toString() + ","+ intVal.toString()), new Text());
 		}
 	}
 
