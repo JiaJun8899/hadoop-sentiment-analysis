@@ -19,35 +19,91 @@ import json
 def index():
     return "<p>Index</p>"
 
+
 @app.route('/barPlot')
 def barPlot():
 
-    bar = createBarPlot()
+    bar = plotlyDoubleBarPlot()
     return render_template("barPlot.html", plot=bar)
-    # return matplotlibBarPlot()
 
 
 def plotlyDoubleBarPlot():
-    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    # populate with job titles
+    # TODO replace with actual job titles
+    labels = ["Software Developer","Software Engineer","Designer","Frontend"
+    ,"Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend"]
+    
+    # add widths based on number of job titles
+    widthArray = []
+    for x in labels:
+        widthArray.append(10)
+    widths = np.array(widthArray)
+    
+    # TODO replace dummy data array
+    originalPos = [32, 5, 12, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31]
+    originalNeg = [12, 4, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55]
 
+    # populate from from data array
+    original = {
+        "Positive": [],
+        "Negative": []
+    }
+    original["Positive"] = originalPos
+    original["Negative"] = originalNeg
+    
+    # store percentage of positive and negatives
+    dataPercentage = {
+        "Positive": [],
+        "Negative": []
+    }
+    for index, x in enumerate(original["Positive"]):
+        # convert to percentage values, 2 dp
+        total = originalPos[index] + originalNeg[index]
+        dataPercentage["Positive"].append(float("{:.2f}".format((originalPos[index] / total) * 100)))
+        dataPercentage["Negative"].append(float("{:.2f}".format((originalNeg[index] / total) * 100)))
+
+    # create graph
     fig = go.Figure()
-    fig.add_trace(go.Bar(
-        x=months,
-        y=[20, 14, 25, 16, 18, 22, 19, 15, 12, 16, 14, 17],
-        name='Primary Product',
-        marker_color='indianred'
-    ))
-    fig.add_trace(go.Bar(
-        x=months,
-        y=[19, 14, 22, 14, 16, 19, 15, 14, 10, 12, 12, 16],
-        name='Secondary Product',
-        marker_color='lightsalmon'
-    ))
+    for key in dataPercentage:
+        fig.add_trace(go.Bar(
+            name=key,
+            y=dataPercentage[key],
+            x=np.cumsum(widths)-widths,
+            width=widths,
+            offset=0,
+            customdata=np.transpose([labels, widths * dataPercentage[key], original[key]]),
+            # texttemplate="%{y}%",   # doesn't scale with scroll bar
+            # textposition="auto",
+            # textangle=0,
+            textfont_color="white",
+            hovertemplate="<br>".join([
+                "Original Value: %{customdata[2]}",
+                "Percentage: %{y}%",
+                # "width: %{width}",
+                # "height: %{y}",
+                # "area: %{customdata[1]}",
+            ])
+        ))
 
-    # Here we modify the tickangle of the xaxis, resulting in rotated labels.
-    fig.update_layout(barmode='group', xaxis_tickangle=-45)
-    fig.show()
+    fig.update_xaxes(
+        tickvals=np.cumsum(widths)-widths/2,
+        ticktext= ["%s" % (l) for l in zip(labels)]
+        # ticktext= ["%s<br>%d" % (l, w) for l, w in zip(labels, widths)]
+    )
+
+    fig.update_xaxes(range=[0,100])
+    fig.update_yaxes(range=[0,100])
+
+    fig.update_layout(
+        title_text="Satisfaction Bar Chart",
+        barmode="stack",
+        uniformtext=dict(mode="hide", minsize=10),
+        xaxis=dict(rangeslider=dict(visible=True), type="linear")
+    )    
+
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return graphJSON
 
 
 def createBarPlot():
