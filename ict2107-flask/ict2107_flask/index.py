@@ -33,6 +33,11 @@ scoreSentiment = []     # score
 counterSenti = []       # index counter
 allInOne = [counterSenti, dateSentiment, senSentiment, scoreSentiment, ratingSentiment, jobSentiment, summarySentiment, prosSentiment, consSentiment]
 
+# definitions for wordcloud
+sentimentWordCloud = []
+proConNeutralWordCloud = []
+werdCloud = []
+wordQtyWordCloud = []
 
 def readBarPlotYear():
     with open(os.path.join(sys.path[0], 'ict2107_flask/barPlotYear'), 'r') as foo:
@@ -48,29 +53,27 @@ def readBarPlotYear():
             sentimentArr = sentiment.split("\t")
             if(sentimentArr[0] == "Negative:"):
                 sentimentArr[1] = sentimentArr[1].strip()
-                negativeArrayBPY.append(sentimentArr[1])
+                negativeArrayBPY.append(int(sentimentArr[1]))
             if(sentimentArr[0] == "Positive:"):
                 sentimentArr[1] = sentimentArr[1].strip()
-                positiveArrayBPY.append(sentimentArr[1])
+                positiveArrayBPY.append(int(sentimentArr[1]))
             if(sentimentArr[0] == "Neutral:"):
                 sentimentArr[1] = sentimentArr[1].strip()
-                neutralArrayBPY.append(sentimentArr[1]) 
+                neutralArrayBPY.append(int(sentimentArr[1])) 
 
 def readBarPlotJobs():
     with open(os.path.join(sys.path[0], 'ict2107_flask/barPlotJobs'), 'r') as foo:
-
         for index, line in enumerate(foo):
             fooArray = line.split(":\t")
-            
             if ((index + 1) % 3 == 0):
                 stringTemp = fooArray[0].split()
                 stringTemp = " ".join(stringTemp[:-1])
                 jobsArrayBPJ.append(stringTemp)
-                neutralArrayBPJ.append(fooArray[1].strip())
+                neutralArrayBPJ.append(int(fooArray[1].strip()))
             elif ((index + 1) % 3 == 1):
-                positiveArrayBPJ.append(fooArray[1].strip())
+                positiveArrayBPJ.append(int(fooArray[1].strip()))
             elif ((index + 1) % 3 == 2):
-                negativeArrayBPJ.append(fooArray[1].strip())
+                negativeArrayBPJ.append(int(fooArray[1].strip()))
 
 def readSentiments():
     with open(os.path.join(sys.path[0], 'ict2107_flask/sentiment'), 'r') as foo:
@@ -87,6 +90,22 @@ def readSentiments():
             fooArray = fooArray[0].split("\t")
             senSentiment.append(fooArray[0])
             summarySentiment.append(fooArray[1])
+
+
+def readWordCloud():
+    return 0
+#     with open(os.path.join(sys.path[0], 'ict2107_flask/sentiment'), 'r') as foo:
+#         for line in foo:
+#             fooArray = line.split('\t')
+#             tmpSentiProCon = fooArray[0].split('-')
+#             sentimentWordCloud.append(tmpSentiProCon[0])
+#             proConNeutralWordCloud.append(tmpSentiProCon[1])
+#             tmpWrdQty = fooArray[1].split(' ')
+#             werdCloud.append(tmpWrdQty[0])
+#             wordQtyWordCloud.append(int(tmpWrdQty[1]))
+
+
+
 
         
 
@@ -107,17 +126,25 @@ class getArrays:
     # For sentiments
     def getSentiments(): return allInOne
 
+    # For wordcloud
+    def getWordCloud_word(): return werdCloud
+    def getWordCloud_qty(): return wordQtyWordCloud
+    def getWordCloud_sentiment(): return sentimentWordCloud
+    def getWordCloud_proConNeutral(): return proConNeutralWordCloud
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     readBarPlotYear()   # Reads barPlotYear data and puts it into the arrays
     readBarPlotJobs()   # Reads barPlotJobs data and puts it into the arrays
     readSentiments()    # Reads sentiment data and puts it into the arrays
+    readWordCloud()     # Reads wordcloud data and puts it into arrays
 
     return (
         # f'<p>contains the following contents: {sentimentArrBPY} <br><br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
-        # f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
-        f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
+        f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
+        # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
+        # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
     )
 
 
