@@ -143,6 +143,7 @@ class getArrays:
 
     # For wordcloud
     def getWordCloud_word(): return werdCloud
+    def getWordCloud_allTheWordsStr(): return ' '.join(werdCloud)
     def getWordCloud_qty(): return wordQtyWordCloud
     def getWordCloud_sentiment(): return sentimentWordCloud
     def getWordCloud_proConNeutral(): return proConNeutralWordCloud
@@ -161,5 +162,5 @@ def index():
         # f'<p>contains the following contents: {sentimentArrBPY} <br><br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
         # f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
         # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
-        # f'<p> The final returned array is: {getArrays.getWordCloud_indexProsCons()}</p>\n'        
+        f'<p> The final returned array is: {getArrays.getWordCloud_allTheWordsStr()}</p>\n'        
     )
