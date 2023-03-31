@@ -162,5 +162,6 @@ def index():
         # f'<p>contains the following contents: {sentimentArrBPY} <br><br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
         # f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
         # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
-        f'<p> The final returned array is: {getArrays.getWordCloud_allTheWordsStr()}</p>\n'        
+        # f'<p> The final returned array is: {getArrays.getWordCloud_allTheWordsStr()}</p>\n'        
+        render_template("upload.html")
     )
