@@ -1,5 +1,5 @@
 from ict2107_flask import app
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from matplotlib.figure import Figure
 
 import base64
@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import json
+import csv
 
 @app.route('/barPlot/<path:type>')
 def barPlot(type):

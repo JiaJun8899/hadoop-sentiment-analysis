@@ -1,0 +1,14 @@
+<html>
+  <body>
+    <h1>Upload the .FILE to do sentiment analysis</h1>
+    <!-- The action attribute in the form tag determines what happens after the button submit is clicked-->
+    <form
+      action="http://localhost:5000/"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <input type="file" name="file" />
+      <input type="submit" />
+    </form>
+  </body>
+</html>
