@@ -3,6 +3,8 @@ from flask import Flask, render_template, request
 from matplotlib.figure import Figure
 from plotly.subplots import make_subplots
 
+from ict2107_flask.index import *
+
 import plotly
 import plotly.graph_objs as go
 from plotly.offline import plot
@@ -18,14 +20,14 @@ from io import BytesIO
 
 @app.route('/wordCloud')
 def wordCloud():
-    cloud = plotlyWordCloud()
+    # process word cloud data
+    readWordCloud()
+    # get word cloud data
+    cloud = plotlyWordCloud(getArrays.getWordCloud_allTheWordsStr())
     return render_template("wordCloud.html", plot=cloud)
 
 
-def plotlyWordCloud():
-    # Start with one review:
-    text = "hello hello hello world"
-
+def plotlyWordCloud(text):
     # Create and generate a word cloud image:
     wordcloud = WordCloud(background_color="white").generate(text)
 
@@ -33,6 +35,7 @@ def plotlyWordCloud():
     fig = plt.figure()
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
+    # plt.show()
 
     # Save it to a temporary buffer.
     buf = BytesIO()

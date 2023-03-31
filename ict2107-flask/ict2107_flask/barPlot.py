@@ -2,6 +2,8 @@ from ict2107_flask import app
 from flask import Flask, render_template, request
 from matplotlib.figure import Figure
 
+from ict2107_flask.index import *
+
 import base64
 from io import BytesIO
 
@@ -18,20 +20,27 @@ import csv
 
 @app.route('/barPlot/<path:type>')
 def barPlot(type):
-    # populate with job titles
-    # TODO replace with actual job titles
-    labels = ["Software Developer","Software Engineer","Designer","Frontend"
-    ,"Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend"]
-
-    # TODO replace dummy data array
-    originalPos = [32, 5, 12, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31]
-    originalNeg = [12, 4, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55]
-    originalNeutral = [2, 4, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]    
-
     if (type == "job"):
+        # process job bar plot data
+        readBarPlotJobs()
+        # get job bar plot data
+        labels = getArrays.getJobsArrayBPJ()
+
+        originalPos = getArrays.getPositiveArrayBPJ()
+        originalNeg = getArrays.getNegativeArrayBPJ()
+        originalNeutral = getArrays.getNeutralArrayBPJ()
         bar = plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
+
     elif (type == "year"):
+        # process job bar plot data
+        readBarPlotYear()
+        # get job bar plot data
+        labels = getArrays.getYearArrBPY()
+
+        originalPos = getArrays.getPositiveArrBPY()
+        originalNeg = getArrays.getNegativeArrBPY()
+        originalNeutral = getArrays.getNeutralArrBPY()
         bar = plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
 
