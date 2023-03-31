@@ -38,6 +38,11 @@ sentimentWordCloud = []
 proConNeutralWordCloud = []
 werdCloud = []
 wordQtyWordCloud = []
+sentiChangesIndex = []  #index at which negative becomes neutral becomes positive
+
+# index at which pros become cons back to pros so an output of 
+# [a,b,c,...] means pros will be from index 0 till a-1, cons will be from a to b-1, pros will be from b to c-1 etc etc
+prosConsChangesIndex = [] 
 
 def readBarPlotYear():
     with open(os.path.join(sys.path[0], 'ict2107_flask/barPlotYear'), 'r') as foo:
@@ -93,16 +98,26 @@ def readSentiments():
 
 
 def readWordCloud():
-    return 0
-#     with open(os.path.join(sys.path[0], 'ict2107_flask/sentiment'), 'r') as foo:
-#         for line in foo:
-#             fooArray = line.split('\t')
-#             tmpSentiProCon = fooArray[0].split('-')
-#             sentimentWordCloud.append(tmpSentiProCon[0])
-#             proConNeutralWordCloud.append(tmpSentiProCon[1])
-#             tmpWrdQty = fooArray[1].split(' ')
-#             werdCloud.append(tmpWrdQty[0])
-#             wordQtyWordCloud.append(int(tmpWrdQty[1]))
+    with open(os.path.join(sys.path[0], 'ict2107_flask/wordCloud'), 'r') as foo:
+        ah = "negative"
+        ahh = "pros"
+        for i, line in enumerate(foo):
+            fooArray = line.split('\t') # in the format of ['postive-pros','great 1']
+            
+            tmpSentiProCon = fooArray[0].split('-') # in the format of ['positive', 'pros']
+            
+            if ah != tmpSentiProCon[0]: sentiChangesIndex.append(i)
+            ah = tmpSentiProCon[0]
+            sentimentWordCloud.append(tmpSentiProCon[0])
+            proConNeutralWordCloud.append(tmpSentiProCon[1])
+
+            if ahh != tmpSentiProCon[1]: prosConsChangesIndex.append(i)
+            ahh = tmpSentiProCon[1]
+            
+            tmpWrdQty = fooArray[1].split(' ')      # in the format of ['great', '1']
+            
+            werdCloud.append(tmpWrdQty[0])
+            wordQtyWordCloud.append(int(tmpWrdQty[1]))
 
 
 
@@ -131,6 +146,8 @@ class getArrays:
     def getWordCloud_qty(): return wordQtyWordCloud
     def getWordCloud_sentiment(): return sentimentWordCloud
     def getWordCloud_proConNeutral(): return proConNeutralWordCloud
+    def getWordCloud_indexSentim(): return sentiChangesIndex
+    def getWordCloud_indexProsCons(): return prosConsChangesIndex
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -142,47 +159,7 @@ def index():
 
     return (
         # f'<p>contains the following contents: {sentimentArrBPY} <br><br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
-        f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
+        # f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
         # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
-        # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
+        # f'<p> The final returned array is: {getArrays.getWordCloud_indexProsCons()}</p>\n'        
     )
-
-
-
-    # Once user clicks on submit and request has been sent to the flask server
-    # if request.method == 'POST':
-    #     foo = request.files['file']
-    #     fooArray = []
-    #     # print(fooArray.split(","))
-
-    #     # Put each line in the csv into an array
-        # for index, line in enumerate(foo):
-        #     line = line.decode("utf-8") # So that we reading it in strings not bytes
-        #     fooArray = line.split(" ")  # Split to get the year
-        #     if (index % 4 == 0):
-        #         yearArray.append(fooArray[0])
-        #     sentimentsArray.append(fooArray[1])
-            
-        #     # print(sentimentsArray)
-        
-        # for sentiment in sentimentsArray:
-        #     sentimentArr = sentiment.split("\t")
-        #     if(sentimentArr[0] == "Negative:"):
-        #         sentimentArr[1] = sentimentArr[1].strip()
-        #         negativeArray.append(sentimentArr[1])
-        #     if(sentimentArr[0] == "Positive:"):
-        #         sentimentArr[1] = sentimentArr[1].strip()
-        #         positiveArray.append(sentimentArr[1])
-        #     if(sentimentArr[0] == "Neutral:"):
-        #         sentimentArr[1] = sentimentArr[1].strip()
-        #         neutralArray.append(sentimentArr[1]) 
-    
-
-        # return f'<p>{foo.filename} contains the following contents: {sentimentsArray} <br><br> YearArr: {yearArray} <br> PositiveArr: {positiveArray}<br> NegativeArr: {negativeArray} <br> NeutralArr: {neutralArray}<p>'
-    
-    # Return this as the default page when first load
-    # return render_template("upload.html") + "<a href=/barPlot>go to the barplot page</a>"
-
-
-
-# [[negative, neative, negative, ...], [ux, good company work, ...], []]
