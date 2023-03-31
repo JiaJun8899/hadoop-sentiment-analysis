@@ -50,16 +50,17 @@ def readBarPlotJobs():
         for index, line in enumerate(foo):
             fooArray = line.split(":\t")
             
-            if ((index + 1) % 3 == 2):
-                negativeArrayBPJ.append(fooArray[1].strip())
-            elif ((index + 1) % 3 == 0):
-                jobsArrayBPJ.append(fooArray[0])
+            if ((index + 1) % 3 == 0):
+                stringTemp = fooArray[0].split()
+                stringTemp = " ".join(stringTemp[:-1])
+                jobsArrayBPJ.append(stringTemp)
                 neutralArrayBPJ.append(fooArray[1].strip())
             elif ((index + 1) % 3 == 1):
                 positiveArrayBPJ.append(fooArray[1].strip())
+            elif ((index + 1) % 3 == 2):
+                negativeArrayBPJ.append(fooArray[1].strip())
 
-            
-        
+
 
 class getArrays:
     # For bar plot year
@@ -84,8 +85,8 @@ def index():
     readBarPlotJobs()   # Reads barPlotJobs data and puts it into the arrays
 
     return (
-        # f'<p>contains the following contents: {sentimentsArrayBPY} <br><br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
-        f'<p><br> JobsArr: {getArrays.getJobsArrayBPJ()} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
+        # f'<p>contains the following contents: {sentimentArrBPY} <br><br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
+        f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
     )
 
 
