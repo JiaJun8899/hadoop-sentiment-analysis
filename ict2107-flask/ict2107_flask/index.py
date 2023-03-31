@@ -21,6 +21,18 @@ positiveArrayBPJ = []  # [positive] for barPlotJobs
 negativeArrayBPJ = []  # [negative] for barPlotJobs
 neutralArrayBPJ = []   # [neutral] for barPlotJobs
 
+# definitions for sentiments
+senSentiment = []       # sentiments - pos/neg/neutral
+summarySentiment = []   # summary of review - first word after \t value
+jobSentiment = []       # job title
+ratingSentiment = []    # rating
+prosSentiment = []      # pros
+consSentiment = []      # cons
+dateSentiment = []      # date
+scoreSentiment = []     # score
+counterSenti = []       # index counter
+allInOne = [counterSenti, dateSentiment, senSentiment, scoreSentiment, ratingSentiment, jobSentiment, summarySentiment, prosSentiment, consSentiment]
+
 
 def readBarPlotYear():
     with open(os.path.join(sys.path[0], 'ict2107_flask/barPlotYear'), 'r') as foo:
@@ -60,7 +72,23 @@ def readBarPlotJobs():
             elif ((index + 1) % 3 == 2):
                 negativeArrayBPJ.append(fooArray[1].strip())
 
+def readSentiments():
+    with open(os.path.join(sys.path[0], 'ict2107_flask/sentiment'), 'r') as foo:
+        for i, line in enumerate(foo):
+            fooArray = line.split(",")
+            counterSenti.append(str(i + 1))
+            jobSentiment.append(fooArray[1])
+            ratingSentiment.append(fooArray[2])
+            prosSentiment.append(fooArray[3])
+            consSentiment.append(fooArray[4])
+            dateSentiment.append(fooArray[5])
+            scoreSentiment.append(fooArray[6].removesuffix("\n"))
 
+            fooArray = fooArray[0].split("\t")
+            senSentiment.append(fooArray[0])
+            summarySentiment.append(fooArray[1])
+
+        
 
 class getArrays:
     # For bar plot year
@@ -76,17 +104,20 @@ class getArrays:
     def getNegativeArrayBPJ(): return negativeArrayBPJ
     def getNeutralArrayBPJ(): return neutralArrayBPJ
     
-
+    # For sentiments
+    def getSentiments(): return allInOne
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     readBarPlotYear()   # Reads barPlotYear data and puts it into the arrays
     readBarPlotJobs()   # Reads barPlotJobs data and puts it into the arrays
+    readSentiments()    # Reads sentiment data and puts it into the arrays
 
     return (
         # f'<p>contains the following contents: {sentimentArrBPY} <br><br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
-        f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
+        # f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
+        f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
     )
 
 
@@ -125,10 +156,6 @@ def index():
     # Return this as the default page when first load
     # return render_template("upload.html") + "<a href=/barPlot>go to the barplot page</a>"
 
-# summary
-# job title
-# rating
-# pros
-# cons
-# date
-# score
+
+
+# [[negative, neative, negative, ...], [ux, good company work, ...], []]
