@@ -15,60 +15,68 @@ import pandas as pd
 import numpy as np
 import json
 
-@app.route("/")
-def index():
-    return "<p>Index</p>"
-
-
-@app.route('/barPlot')
-def barPlot():
-
-    bar = plotlyDoubleBarPlot()
-    return render_template("barPlot.html", plot=bar)
-
-
-def plotlyDoubleBarPlot():
+@app.route('/barPlot/<path:type>')
+def barPlot(type):
     # populate with job titles
     # TODO replace with actual job titles
     labels = ["Software Developer","Software Engineer","Designer","Frontend"
     ,"Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend"]
-    
+
+    # TODO replace dummy data array
+    originalPos = [32, 5, 12, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31]
+    originalNeg = [12, 4, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55]
+    originalNeutral = [2, 4, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]    
+
+    if (type == "job"):
+        bar = plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral)
+        return render_template("barPlot.html", plot=bar)
+    elif (type == "year"):
+        bar = plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral)
+        return render_template("barPlot.html", plot=bar)
+
+
+def plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral):
     # add widths based on number of job titles
     widthArray = []
     for x in labels:
         widthArray.append(10)
     widths = np.array(widthArray)
-    
-    # TODO replace dummy data array
-    originalPos = [32, 5, 12, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31]
-    originalNeg = [12, 4, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55]
 
     # populate from from data array
     original = {
         "Positive": [],
-        "Negative": []
+        "Negative": [],
+        "Neutral": []
     }
     original["Positive"] = originalPos
     original["Negative"] = originalNeg
+    original["Neutral"] = originalNeutral
     
     # store percentage of positive and negatives
     dataPercentage = {
         "Positive": [],
-        "Negative": []
+        "Negative": [],
+        "Neutral": []
     }
     for index, x in enumerate(original["Positive"]):
         # convert to percentage values, 2 dp
-        total = originalPos[index] + originalNeg[index]
+        total = originalPos[index] + originalNeg[index] + originalNeutral[index]
         dataPercentage["Positive"].append(float("{:.2f}".format((originalPos[index] / total) * 100)))
         dataPercentage["Negative"].append(float("{:.2f}".format((originalNeg[index] / total) * 100)))
+        dataPercentage["Neutral"].append(float("{:.2f}".format((originalNeutral[index] / total) * 100)))
+
+    # colour array
+    colour = ['#43AA8B', '#DB3A34', "#948D9B"]
+    # colour = ['#a172cc', '#7227b8', "#a3a0a0"]
 
     # create graph
     fig = go.Figure()
-    for key in dataPercentage:
+    for index, key in enumerate(dataPercentage):
         fig.add_trace(go.Bar(
             name=key,
             y=dataPercentage[key],
             x=np.cumsum(widths)-widths,
+            marker_color=colour[index],
             width=widths,
             offset=0,
             customdata=np.transpose([labels, widths * dataPercentage[key], original[key]]),
