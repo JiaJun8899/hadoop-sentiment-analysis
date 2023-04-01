@@ -9,23 +9,23 @@
 <body>
 <div>
     <nav>
-        <a href="/barPlot/job">Bar Plot</a> | 
-        <a href="/wordCloud">Word Cloud</a> | 
+        <a href="/barPlot/matchedJob">Bar Plot</a> | 
+        <a href="/wordCloud/matchedPros">Word Cloud</a> | 
         <a href="/table/negative">Sentiments Table</a>
     </nav>
 </div>
 <br/>
 <div>
     <nav>
-        <a href="/table/negative">Negative Sentiments</a> | 
-        <a href="/table/positive">Positive Sentiments</a> | 
-        <a href="/table/neutral">Neutral Sentiments</a>
+        <a href="/table/negative">Matched Negative Sentiments</a> | 
+        <a href="/table/positive">Matched Positive Sentiments</a> | 
+        <a href="/table/neutral">Matched Neutral Sentiments</a>
     </nav>
 </div>
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-            <div class="chart" id="bargraph">
+            <div class="chart" id="bargraph" style="height: 1400px; overflow-y: auto;">
                 <script>
                     var graphs = {{plot | safe}};
                     Plotly.plot('bargraph',graphs,{});

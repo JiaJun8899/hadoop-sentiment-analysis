@@ -9,22 +9,24 @@
 <body>
 <div>
     <nav>
-        <a href="/barPlot/job">Bar Plot</a> | 
-        <a href="/wordCloud">Word Cloud</a> | 
+        <a href="/barPlot/matchedJob">Bar Plot</a> | 
+        <a href="/wordCloud/matchedPros">Word Cloud</a> | 
         <a href="/table/negative">Sentiments Table</a>
     </nav>
 </div>
 <br/>
 <div>
     <nav>
-        <a href="/barPlot/job">Job Bar Plot</a> | 
-        <a href="/barPlot/year">Year Bar Plot</a>
+        <a href="/barPlot/matchedJob">Matched Job Bar Plot</a> | 
+        <a href="/barPlot/unmatchedJob">Unmatched Job Bar Plot</a> | 
+        <a href="/barPlot/matchedYear">Matched Year Bar Plot</a> | 
+        <a href="/barPlot/unmatchedYear">Unmatched Year Bar Plot</a>
     </nav>
 </div>
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-            <div class="chart" id="bargraph">
+            <div class="chart" id="bargraph" style="height: 1400px; overflow-y: auto;">
                 <script>
                     var graphs = {{plot | safe}};
                     Plotly.plot('bargraph',graphs,{});

@@ -1,6 +1,9 @@
 from ict2107_flask import app
 from flask import Flask, render_template, request
 from matplotlib.figure import Figure
+from plotly.subplots import make_subplots
+
+from ict2107_flask.index import *
 
 import base64
 from io import BytesIO
@@ -18,25 +21,57 @@ import csv
 
 @app.route('/barPlot/<path:type>')
 def barPlot(type):
-    # populate with job titles
-    # TODO replace with actual job titles
-    labels = ["Software Developer","Software Engineer","Designer","Frontend"
-    ,"Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend","Frontend"]
-
-    # TODO replace dummy data array
-    originalPos = [32, 5, 12, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31]
-    originalNeg = [12, 4, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55]
-    originalNeutral = [2, 4, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]    
-
-    if (type == "job"):
-        bar = plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral)
+    if (type == "matchedJob"):
+        title = "Matched Job Satisfaction Bar Plot"
+        # get job bar plot data
+        labels = getArrays.getMatchedJobsArrayBPJ()
+        originalPos = getArrays.getMatchedPositiveArrayBPJ()
+        originalNeg = getArrays.getMatchedNegativeArrayBPJ()
+        originalNeutral = getArrays.getMatchedNeutralArrayBPJ()
+        bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
-    elif (type == "year"):
-        bar = plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral)
+    elif (type == "unmatchedJob"):
+        title = "Unmatched Job Satisfaction Bar Plot"
+        # get job bar plot data
+        labels = getArrays.getUnmatchedJobsArrayBPJ()
+        originalPos = getArrays.getUnmatchedPositiveArrayBPJ()
+        originalNeg = getArrays.getUnmatchedNegativeArrayBPJ()
+        originalNeutral = getArrays.getUnmatchedNeutralArrayBPJ()
+        bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
+        return render_template("barPlot.html", plot=bar)
+    elif (type == "matchedYear"):
+        title = "Matched Year Satisfaction Bar Plot"
+        # get year bar plot data
+        labels = getArrays.getYearArrBPY()
+        originalPos = getArrays.getPositiveArrBPY()
+        originalNeg = getArrays.getNegativeArrBPY()
+        originalNeutral = getArrays.getNeutralArrBPY()
+
+        labels = labels[:len(labels)//2]
+        originalPos = originalPos[:len(originalPos)//2]
+        originalNeg = originalNeg[:len(originalNeg)//2]
+        originalNeutral = originalNeutral[:len(originalNeutral)//2]
+        
+        bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
+        return render_template("barPlot.html", plot=bar)
+    elif (type == "unmatchedYear"):
+        title = "Unmatched Year Satisfaction Bar Plot"
+        # get year bar plot data
+        labels = getArrays.getYearArrBPY()
+        originalPos = getArrays.getPositiveArrBPY()
+        originalNeg = getArrays.getNegativeArrBPY()
+        originalNeutral = getArrays.getNeutralArrBPY()
+
+        labels = labels[len(labels)//2:]
+        originalPos = originalPos[len(originalPos)//2:]
+        originalNeg = originalNeg[len(originalNeg)//2:]
+        originalNeutral = originalNeutral[len(originalNeutral)//2:]
+
+        bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
 
 
-def plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral):
+def plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral):
     # add widths based on number of job titles
     widthArray = []
     for x in labels:
@@ -68,10 +103,18 @@ def plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral):
 
     # colour array
     colour = ['#43AA8B', '#DB3A34', "#948D9B"]
-    # colour = ['#a172cc', '#7227b8', "#a3a0a0"]
 
-    # create graph
-    fig = go.Figure()
+
+    # create graphs
+    fig = make_subplots(
+    rows=2, cols=1,
+    vertical_spacing=0.5,
+    specs=[[{"type": "bar"}],
+           [{"type": "table"}]]
+    )
+
+    # BAR GRAPH
+    # fig = go.Figure()
     for index, key in enumerate(dataPercentage):
         fig.add_trace(go.Bar(
             name=key,
@@ -92,7 +135,8 @@ def plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral):
                 # "height: %{y}",
                 # "area: %{customdata[1]}",
             ])
-        ))
+        ),
+        row=1, col=1)
 
     fig.update_xaxes(
         tickvals=np.cumsum(widths)-widths/2,
@@ -104,74 +148,39 @@ def plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral):
     fig.update_yaxes(range=[0,100])
 
     fig.update_layout(
-        title_text="Satisfaction Bar Chart",
+        title_text=title,
         barmode="stack",
         uniformtext=dict(mode="hide", minsize=10),
         xaxis=dict(rangeslider=dict(visible=True), type="linear")
-    )    
+    )
+    
+    # TABLE
+    tableArray = [labels,originalPos,originalNeg,originalNeutral]
+    fig.add_trace(go.Table(
+        columnorder = [1,2,3,4],
+        columnwidth = [20,10,10,10],
+        header = dict(
+            values = [
+                ['Jobs'],
+                ['Positive Sentiment Value'],
+                ['Negative Sentiment Value'],
+                ['Neutral Sentiment Value']],
+        line_color='darkslategray',
+        fill_color='royalblue',
+        align=['center','center','center','center'],
+        font=dict(color='white', size=12),
+        height=40,
+        ),
+        cells=dict(
+            values=tableArray,
+            line_color='darkslategray',
+            fill=dict(color=['paleturquoise','white','white','white']),
+            align=['center','center','center','center'],
+            font_size=12,
+            height=30),
+    ),
+    row=2, col=1)
 
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     return graphJSON
-
-
-def createBarPlot():
-    N = 40
-    x = np.linspace(0, 1, N)
-    y = np.random.randn(N)
-    df = pd.DataFrame({'x': x, 'y': y}) # creating a sample dataframe
-
-
-    data = [
-        go.Bar(
-            x=df['x'], # assign x as the dataframe column 'x'
-            y=df['y']
-        )
-    ]
-
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return graphJSON
-
-
-def matplotlibBarPlot():
-    fig = Figure()
-    ax = fig.subplots()
-    ax.plot([1, 2])
-
-    # Save it to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    # Embed the result in the html output.
-    data = base64.b64encode(buf.getbuffer()).decode("ascii")
-
-    return f"<img src='data:image/png;base64,{data}'/>"
-
-
-def matplotlib3DBarPlot():
-    # set up the figure and axes
-    fig = plt.figure(figsize=(10, 10))
-    ax1 = fig.add_subplot(121, projection='3d')
-
-    # fake data
-    _x = np.arange(4)
-    _y = np.arange(5)
-    _xx, _yy = np.meshgrid(_x, _y)
-    x, y = _xx.ravel(), _yy.ravel()
-
-    top = x + y
-    bottom = np.zeros_like(top)
-    width = depth = 1
-
-    ax1.bar3d(x, y, bottom, width, depth, top, shade=True)
-    ax1.set_title('Shaded')
-
-    # Save it to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    # Embed the result in the html output.
-    data = base64.b64encode(buf.getbuffer()).decode("ascii")
-
-    return f"<img src='data:image/png;base64,{data}'/>"
-
-    # plt.show()
