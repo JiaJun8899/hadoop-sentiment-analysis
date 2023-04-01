@@ -24,7 +24,7 @@ import reducers.YearReducer;
 public class SentimentDriver {
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		Job counterJob = Job.getInstance(conf, "SentimentCount");
+		Job counterJob = Job.getInstance(conf, "Sentiment Word Counter");
 		counterJob.setJarByClass(SentimentDriver.class);
 		counterJob.setMapperClass(ChainMapper.class);
 		counterJob.setReducerClass(CounterReducer.class);
@@ -32,14 +32,14 @@ public class SentimentDriver {
 		counterJob.setOutputKeyClass(Text.class);
 		counterJob.setOutputValueClass(Text.class);
 
-		Path inPath = new Path("hdfs://localhost:9000/user/jiajun/project/input/");
-		Path counterOutPath = new Path("hdfs://localhost:9000/user/jiajun/project/output/counter");
+		Path inPath = new Path("hdfs://hadoop-master:9000/user/ict2101351/project/input/");
+		Path counterOutPath = new Path("hdfs://hadoop-master:9000/user/ict2101351/project/output/counter");
 		counterOutPath.getFileSystem(conf).delete(counterOutPath, true);
 
 		// Put this file to distributed cache so we can use it to join
-		counterJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/AFINN.tsv"));
-		counterJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/stopwords.txt"));
-		counterJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/lemm.tsv"));
+		counterJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/AFINN.tsv"));
+		counterJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/stopwords.txt"));
+		counterJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/lemm.tsv"));
 
 		Configuration validationConf = new Configuration(false);
 		ChainMapper.addMapper(counterJob, SentimentValidationMapper.class, LongWritable.class, Text.class,
@@ -57,7 +57,7 @@ public class SentimentDriver {
 		FileOutputFormat.setOutputPath(counterJob, counterOutPath);
 
 		Configuration conf2 = new Configuration();
-		Job yearJob = Job.getInstance(conf2, "SentimentCount");
+		Job yearJob = Job.getInstance(conf2, "Year Analysis");
 		yearJob.setJarByClass(SentimentDriver.class);
 		yearJob.setMapperClass(ChainMapper.class);
 		yearJob.setReducerClass(YearReducer.class);
@@ -65,13 +65,13 @@ public class SentimentDriver {
 		yearJob.setOutputKeyClass(Text.class);
 		yearJob.setOutputValueClass(IntWritable.class);
 
-		Path yearOutPath = new Path("hdfs://localhost:9000/user/jiajun/project/output/year");
+		Path yearOutPath = new Path("hdfs://hadoop-master:9000/user/ict2101351/project/output/year");
 		yearOutPath.getFileSystem(conf2).delete(yearOutPath, true);
 
 		// Put this file to distributed cache so we can use it to join
-		yearJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/AFINN.tsv"));
-		yearJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/stopwords.txt"));
-		yearJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/lemm.tsv"));
+		yearJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/AFINN.tsv"));
+		yearJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/stopwords.txt"));
+		yearJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/lemm.tsv"));
 
 		ChainMapper.addMapper(yearJob, SentimentValidationMapper.class, LongWritable.class, Text.class,
 				LongWritable.class, Text.class, validationConf);
@@ -84,7 +84,7 @@ public class SentimentDriver {
 		FileOutputFormat.setOutputPath(yearJob, yearOutPath);
 
 		Configuration conf3 = new Configuration();
-		Job jobJob = Job.getInstance(conf3, "SentimentCount");
+		Job jobJob = Job.getInstance(conf3, "Jobs Analysis");
 		jobJob.setJarByClass(SentimentDriver.class);
 		jobJob.setMapperClass(ChainMapper.class);
 		jobJob.setReducerClass(JobReducer.class);
@@ -92,13 +92,13 @@ public class SentimentDriver {
 		jobJob.setOutputKeyClass(Text.class);
 		jobJob.setOutputValueClass(IntWritable.class);
 
-		Path jobOutPath = new Path("hdfs://localhost:9000/user/jiajun/project/output/job");
+		Path jobOutPath = new Path("hdfs://hadoop-master:9000/user/ict2101351/project/output/job");
 		jobOutPath.getFileSystem(conf3).delete(jobOutPath, true);
 
 		// Put this file to distributed cache so we can use it to join
-		jobJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/AFINN.tsv"));
-		jobJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/stopwords.txt"));
-		jobJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/lemm.tsv"));
+		jobJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/AFINN.tsv"));
+		jobJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/stopwords.txt"));
+		jobJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/lemm.tsv"));
 
 		ChainMapper.addMapper(jobJob, SentimentValidationMapper.class, LongWritable.class, Text.class,
 				LongWritable.class, Text.class, validationConf);
@@ -111,7 +111,7 @@ public class SentimentDriver {
 		FileOutputFormat.setOutputPath(jobJob, jobOutPath);
 
 		Configuration conf4 = new Configuration();
-		Job accJob = Job.getInstance(conf4, "Accuracy");
+		Job accJob = Job.getInstance(conf4, "Accuracy Analysis");
 		accJob.setJarByClass(SentimentDriver.class);
 		accJob.setMapperClass(ChainMapper.class);
 		accJob.setReducerClass(AccuracyReducer.class);
@@ -119,13 +119,13 @@ public class SentimentDriver {
 		accJob.setOutputKeyClass(Text.class);
 		accJob.setOutputValueClass(IntWritable.class);
 
-		Path accOutPath = new Path("hdfs://localhost:9000/user/jiajun/project/output/accuracy");
+		Path accOutPath = new Path("hdfs://hadoop-master:9000/user/ict2101351/project/output/accuracy");
 		accOutPath.getFileSystem(conf4).delete(accOutPath, true);
 
 		// Put this file to distributed cache so we can use it to join
-		accJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/AFINN.tsv"));
-		accJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/stopwords.txt"));
-		accJob.addCacheFile(new URI("hdfs://localhost:9000/user/jiajun/project/Utils/lemm.tsv"));
+		accJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/AFINN.tsv"));
+		accJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/stopwords.txt"));
+		accJob.addCacheFile(new URI("hdfs://hadoop-master:9000/user/ict2101351/project/Utils/lemm.tsv"));
 
 		ChainMapper.addMapper(accJob, SentimentValidationMapper.class, LongWritable.class, Text.class,
 				LongWritable.class, Text.class, validationConf);
