@@ -20,32 +20,46 @@ import csv
 
 @app.route('/barPlot/<path:type>')
 def barPlot(type):
-    if (type == "job"):
-        # process job bar plot data
-        readBarPlotJobs()
+    if (type == "matchedJob"):
+        title = "Matched Job Satisfaction Bar Plot"
         # get job bar plot data
         labels = getArrays.getJobsArrayBPJ()
-
         originalPos = getArrays.getPositiveArrayBPJ()
         originalNeg = getArrays.getNegativeArrayBPJ()
         originalNeutral = getArrays.getNeutralArrayBPJ()
-        bar = plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral)
+        bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
-
-    elif (type == "year"):
-        # process job bar plot data
-        readBarPlotYear()
+    elif (type == "unmatchedJob"):
+        title = "Unmatched Job Satisfaction Bar Plot"
         # get job bar plot data
+        labels = getArrays.getJobsArrayBPJ()
+        originalPos = getArrays.getPositiveArrayBPJ()
+        originalNeg = getArrays.getNegativeArrayBPJ()
+        originalNeutral = getArrays.getNeutralArrayBPJ()
+        bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
+        return render_template("barPlot.html", plot=bar)
+    elif (type == "matchedYear"):
+        title = "Matched Year Satisfaction Bar Plot"
+        # get year bar plot data
         labels = getArrays.getYearArrBPY()
-
+        originalPos = getArrays.getPositiveArrBPY()
+        print(getArrays.getPositiveArrBPY())
+        originalNeg = getArrays.getNegativeArrBPY()
+        originalNeutral = getArrays.getNeutralArrBPY()
+        bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
+        return render_template("barPlot.html", plot=bar)
+    elif (type == "unmatchedYear"):
+        title = "Unmatched Year Satisfaction Bar Plot"
+        # get year bar plot data
+        labels = getArrays.getYearArrBPY()
         originalPos = getArrays.getPositiveArrBPY()
         originalNeg = getArrays.getNegativeArrBPY()
         originalNeutral = getArrays.getNeutralArrBPY()
-        bar = plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral)
+        bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
 
 
-def plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral):
+def plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral):
     # add widths based on number of job titles
     widthArray = []
     for x in labels:
@@ -113,7 +127,7 @@ def plotlyDoubleBarPlot(labels, originalPos, originalNeg, originalNeutral):
     fig.update_yaxes(range=[0,100])
 
     fig.update_layout(
-        title_text="Satisfaction Bar Chart",
+        title_text=title,
         barmode="stack",
         uniformtext=dict(mode="hide", minsize=10),
         xaxis=dict(rangeslider=dict(visible=True), type="linear")

@@ -18,13 +18,16 @@ import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
 
-@app.route('/wordCloud')
-def wordCloud():
-    # process word cloud data
-    readWordCloud()
-    # get word cloud data
-    cloud = plotlyWordCloud(getArrays.getWordCloud_allTheWordsStr())
-    return render_template("wordCloud.html", plot=cloud)
+@app.route('/wordCloud/<path:type>')
+def wordCloud(type):
+    if (type == "matched"):
+        # get word cloud data
+        cloud = plotlyWordCloud(getArrays.getWordCloud_allTheWordsStr())
+        return render_template("wordCloud.html", plot=cloud, title="Matched Word Cloud")
+    elif (type == "unmatched"):
+        # get word cloud data
+        cloud = plotlyWordCloud(getArrays.getWordCloud_allTheWordsStr())
+        return render_template("wordCloud.html", plot=cloud, title="Unmatched Word Cloud")
 
 
 def plotlyWordCloud(text):

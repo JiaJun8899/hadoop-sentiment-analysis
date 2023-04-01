@@ -9,13 +9,21 @@
 <body>
 <div>
     <nav>
-        <a href="/barPlot/job">Bar Plot</a> | 
-        <a href="/wordCloud">Word Cloud</a> | 
+        <a href="/barPlot/matchedJob">Bar Plot</a> | 
+        <a href="/wordCloud/matched">Word Cloud</a> | 
         <a href="/table/negative">Sentiments Table</a>
+    </nav>
+</div>
+<br/>
+<div>
+    <nav>
+        <a href="/wordCloud/matched">Matched Word Cloud</a> | 
+        <a href="/wordCloud/unmatched">Unmatched Word Cloud</a>
     </nav>
 </div>
 <div class="container">
     <div class="row">
+        <h2>{{title}}</h2>
         <div class="col-md-6">
             <div class="chart" id="bargraph">
                 <img src='data:image/png;base64, {{plot}}' style="height: 700px; overflow-y: auto;"/>

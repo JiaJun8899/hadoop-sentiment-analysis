@@ -19,36 +19,24 @@ import json
 
 @app.route('/table/<path:sentim>')
 def table(sentim):
-    # process sentiment data
-    readSentiments()
-
     # TODO replace with sentiments arrays
+    # array of arrays
     # [index num, date, Pos/Neg/Neutral, sentim value, rating, job title, summary, pros, cons]
-    # values = [
-    #     ['Negative', 'Negative', 'Negative', 'Negative', 'Negative'],
-    #     ['-1', '-4', '-2', '-2', '-2'],
-    #     ['-1', '-4', '-2', '-2', '-2'],
-    #     ['-1', '-4', '-2', '-2', '-2'],
-    #     ['-1', '-4', '-2', '-2', '-2'],
-    #     ['-1', '-4', '-2', '-2', '-2'],
-    #     ['-1', '-4', '-2', '-2', '-2'],
-    #     ['-1', '-4', '-2', '-2', '-2'],
-    #     ['-1', '-4', '-2', '-2', '-2'],]
     values = getArrays.getSentiments()
 
     # display table based on path
     if (sentim == "negative"):
-        table = sentimentTable(values)
+        table = sentimentTable("Negative Sentiments", values)
         return render_template("table.html", plot=table)
     elif (sentim == "positive"):
-        table = sentimentTable(values)
+        table = sentimentTable("Positive Sentiments", values)
         return render_template("table.html", plot=table)
     elif (sentim == "neutral"):
-        table = sentimentTable(values)
+        table = sentimentTable("Neutral Sentiments", values)
         return render_template("table.html", plot=table)
 
 
-def sentimentTable(values):
+def sentimentTable(title, values):
     # first data set
     fig = go.Figure(data=[go.Table(
         columnorder = [1,2,3,4,5,6,7,8,9],
@@ -78,6 +66,10 @@ def sentimentTable(values):
             font_size=12,
             height=30),
     )])
+
+    fig.update_layout(
+        title_text=title
+    )
 
     # convert to json
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)

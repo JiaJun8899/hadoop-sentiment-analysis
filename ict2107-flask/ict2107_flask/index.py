@@ -1,7 +1,7 @@
 import os
 import sys
 from ict2107_flask import app
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 
@@ -153,15 +153,19 @@ class getArrays:
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    # read all data at the start
     readBarPlotYear()   # Reads barPlotYear data and puts it into the arrays
     readBarPlotJobs()   # Reads barPlotJobs data and puts it into the arrays
     readSentiments()    # Reads sentiment data and puts it into the arrays
     readWordCloud()     # Reads wordcloud data and puts it into arrays
 
-    return (
-        # f'<p>contains the following contents: {sentimentArrBPY} <br><br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
-        # f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
-        # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
-        # f'<p> The final returned array is: {getArrays.getWordCloud_allTheWordsStr()}</p>\n'        
-        render_template("upload.html")
-    )
+    # redirect to graph main page
+    return redirect("/barPlot/matchedJob", code=302)
+
+    # return (
+    #     # f'<p>contains the following contents: {sentimentArrBPY} <br><br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
+    #     # f'<p><br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
+    #     # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
+    #     # f'<p> The final returned array is: {getArrays.getWordCloud_allTheWordsStr()}</p>\n'        
+    #     render_template("upload.html")
+    # )
