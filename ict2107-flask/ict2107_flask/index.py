@@ -45,10 +45,11 @@ allPositiveSentiments = [[],[],[],[],[],[],[],[],[],[],[]]
 allNeutralSentiments = [[],[],[],[],[],[],[],[],[],[],[]]
 
 # definitions for wordcloud
-matchWordCloud = []
 sentimentWordCloud = []
 proConNeutralWordCloud = []
 werdCloud = []
+matchedWordCloud = []
+unmatchedWordCloud = []
 wordQtyWordCloud = []
 sentiChangesIndex = []  #index at which negative becomes neutral becomes positive
 matchChangesIndex = []
@@ -185,7 +186,6 @@ def readWordCloud():
         for i, line in enumerate(foo):
             fooArray = line.split('\t') # in the format of ['Matched', 'postive-pros', 'great 1']
 
-            matchWordCloud.append(fooArray[0])
             if fooArray[0] != ahhh: 
                 matchChangesIndex.append(i)
                 ahhh = fooArray[0] 
@@ -204,6 +204,9 @@ def readWordCloud():
             
             werdCloud.append(tmpWrdQty[0])
             wordQtyWordCloud.append(int(tmpWrdQty[1]))
+    
+    matchedWordCloud.append(' '.join(werdCloud[0:matchChangesIndex[0]]))
+    unmatchedWordCloud.append(' '.join(werdCloud[matchChangesIndex[0]:]))
 
 
 
@@ -237,10 +240,14 @@ class getArrays:
     def getNeutralSentiments(): return allNeutralSentiments
 
     # For wordcloud
-    def getWordCloud_match(): return matchWordCloud
+    # def getWordCloud_match(): return matchWordCloud
     def getWordCloud_indexMatchChange(): return matchChangesIndex[0]
     def getWordCloud_word(): return werdCloud
     def getWordCloud_allTheWordsStr(): return ' '.join(werdCloud)
+
+    def getWordCloud_matchedStr(): return ' '.join(matchedWordCloud)
+    def getWordCloud_unmatchedStr(): return ' '.join(unmatchedWordCloud)
+
     def getWordCloud_qty(): return wordQtyWordCloud
     def getWordCloud_sentiment(): return sentimentWordCloud
     def getWordCloud_proConNeutral(): return proConNeutralWordCloud
@@ -257,12 +264,12 @@ def index():
     readWordCloud()     # Reads wordcloud data and puts it into arrays
 
     # redirect to graph main page
-    return redirect("/barPlot/matchedJob", code=302)
+    # return redirect("/barPlot/matchedJob", code=302)
 
     return (
         # f'<p><br> MatchedArr: {matchesBPY}<br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
         # f'<p> <br> matchesArr:{matchesBPJ} <br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
         # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
-        # f'<p> The final returned array is: {getArrays.getWordCloud_indexMatchChange()}</p>\n'        
+        f'<p> The final returned array is: {getArrays.getWordCloud_unmatchedStr()}</p>\n'        
         # render_template("upload.html")
     )
