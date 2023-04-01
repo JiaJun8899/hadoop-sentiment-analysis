@@ -13,6 +13,7 @@ public class YearReducer extends Reducer<Text, Text, Text, IntWritable>{
 		int neuCount = 0;
 		int negCount = 0;
 		int totalYear = 0;
+		// counts the sentiments for the unique year that is in the dataset
 		for (Text value: values) {
 			String sentiment = value.toString();
 			if (sentiment.equals("positive")) {

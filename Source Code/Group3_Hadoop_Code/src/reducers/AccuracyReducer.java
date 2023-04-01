@@ -9,6 +9,7 @@ public class AccuracyReducer extends Reducer<Text, Text, Text, Text>{
 
 	@Override
 	protected void reduce(Text key, Iterable<Text> values, Reducer<Text, Text, Text, Text>.Context context) throws IOException, InterruptedException {
+		// values needed for accuracy calculation
 		int truePositive = 0;
 		int trueNegative = 0;
 		int trueNeutral = 0;
@@ -16,10 +17,14 @@ public class AccuracyReducer extends Reducer<Text, Text, Text, Text>{
 		int falseNegative = 0;
 		int falseNeutral = 0;
 		int total = 0;
+		// loop all the values with the associated key
 		for (Text senti: values) {
 			String[] parts = senti.toString().split("\t");
+			// get the actual rating
 			String actual = parts[1];
+			// get created model's rating
 			String modelled = parts[2];
+			// checker to see if it matches with the user's sentiment
 			if (actual.equals(modelled)) {
 				if(actual.equals("positive")) {
 					truePositive ++;
@@ -39,6 +44,7 @@ public class AccuracyReducer extends Reducer<Text, Text, Text, Text>{
 			}
 			total ++;
 		}
+		// formula and writing to context the values from the two category
 		int correct = truePositive + trueNegative + trueNeutral;
 		double accuracy = (double) correct/total * 100.0;
 		context.write(key, new Text("True Positive: " + truePositive));

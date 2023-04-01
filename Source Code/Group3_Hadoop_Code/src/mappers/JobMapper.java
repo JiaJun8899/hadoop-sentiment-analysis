@@ -6,30 +6,19 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 public class JobMapper extends Mapper<Text, Text, Text, Text> {
-
-	@Override
-	protected void map(Text key, Text value, Mapper<Text, Text, Text, Text>.Context context)
-			throws IOException, InterruptedException {
-		String[] parts = value.toString().split(",");
-		String job = parts[1];
-		String[] diffKey = key.toString().split("\t");
-		if (diffKey[0].equals("positive")) {
-			context.write(new Text("UnMatched\t" + job), new Text(diffKey[0]));
-		}
-		if (diffKey[0].equals("negative")) {
-			context.write(new Text("UnMatched\t" + job), new Text(diffKey[0]));
-		}
-		if (diffKey[0].equals("neutral")) {
-			context.write(new Text("UnMatched\t" + job), new Text(diffKey[0]));
-		}
-		if (diffKey[1].equals("positive")) {
-			context.write(new Text("Matched\t" + job), new Text(diffKey[0]));
-		}
-		if (diffKey[1].equals("negative")) {
-			context.write(new Text("Matched\t" + job), new Text(diffKey[1]));
-		}
-		if (diffKey[1].equals("neutral")) {
-			context.write(new Text("Matched\t" + job), new Text(diffKey[0]));
-		}
-	}
+    @Override
+    protected void map(Text key, Text value, Mapper<Text, Text, Text, Text>.Context context)
+            throws IOException, InterruptedException {
+        String[] parts = value.toString().split(",");
+        //get the job title
+        String job = parts[1];
+		// index [0] is unmatched and [1] is matched
+        String[] diffKey = key.toString().split("\t");
+        // loop to write the prefix and puts the job as key and sentiment as value
+        for (int i = 0; i < diffKey.length; i++) {
+            String sentiment = diffKey[i];
+            String prefix = (i == 0) ? "UnMatched" : "Matched";
+            context.write(new Text(prefix + "\t" + job), new Text(sentiment));
+        }
+    }
 }

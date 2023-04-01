@@ -10,32 +10,32 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 public class SentimentMapper extends Mapper<LongWritable, Text, Text, Text> {
-	Hashtable<String, Integer> wordTable = new Hashtable<>();
+	Hashtable<String, Integer> sentimentScores = new Hashtable<>();
 
 	@Override
 	protected void setup(Mapper<LongWritable, Text, Text, Text>.Context context)
 			throws IOException, InterruptedException {
 		BufferedReader br = new BufferedReader(new FileReader("AFINN.tsv"));
 		String line = null;
-		br.readLine();
-		while (true) {
-			line = br.readLine();
-			if (line != null) {
-				String parts[] = line.split("\t");
-				if (parts.length != 2) {
-					System.out.println("Invalid line format: " + line);
-				} else {
-					String word = parts[0];
-					String scoreStr = parts[1];
-					try {
-						int score = Integer.parseInt(scoreStr);
-						wordTable.put(word, score);
-					} catch (NumberFormatException e) {
-						System.out.println("Invalid score format: " + scoreStr);
-					}
-				}
+		while ((line = br.readLine())!= null) {
+			// Splits the AFINN into the key value pairs
+			String parts[] = line.split("\t");
+			
+			// Ensure it has 2 parts
+			if (parts.length != 2) {
+				System.out.println("Invalid line format: " + line);
 			} else {
-				break; // finished reading
+				// Save the key value into a hash map
+				String word = parts[0];
+				String wordValue = parts[1];
+				
+				// Catch potential errors within the file
+				try {
+					int score = Integer.parseInt(wordValue);
+					sentimentScores.put(word, score);
+				} catch (NumberFormatException e) {
+					System.out.println("Invalid score format: " + wordValue);
+				}
 			}
 		}
 		br.close();
@@ -44,59 +44,58 @@ public class SentimentMapper extends Mapper<LongWritable, Text, Text, Text> {
 	@Override
 	protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, Text, Text>.Context context)
 			throws IOException, InterruptedException {
-		String[] parts = value.toString().split(",");
-		String pros = parts[3];
-		String cons = parts[4];
-		Integer unmatchedSentiVal = 0;
-		Integer matchedSentiVal = 0;
-		String outputMatched;
-		String outputUnmatched;
-		String[] tokenPros = pros.split("\\s+");
-		String[] tokenCons = cons.split("\\s+");
-		// Loop through the words in the array
-		for (String word : tokenPros) {
-			// Check if the word is in the hashtable
-			if (wordTable.containsKey(word)) {
-				// If the value associated with the word is positive, write the word and its value to the context
-				unmatchedSentiVal += wordTable.get(word);
-			}
-		}
-		for (String con : tokenCons) {
-			if (wordTable.containsKey(con)) {
-				unmatchedSentiVal += wordTable.get(con);
-			}
-		}
-		if (unmatchedSentiVal == 0) {
-			outputUnmatched = "neutral";
-		} else if (unmatchedSentiVal < 0) {
-			outputUnmatched = "negative";
+		// split the row into columns and extract the pros and cons
+		String[] columns = value.toString().split(",");
+		String pros = columns[3];
+		String cons = columns[4];
+		// Calculate the sentiment value and match it to the labels
+		int unmatchedSentiVal = calculateSentimentValue(pros, cons, false);
+		int matchedSentiVal = calculateSentimentValue(pros, cons, true);
+		String matchedLabel = getSentimentLabel(matchedSentiVal);
+		String unMatchLabel = getSentimentLabel(unmatchedSentiVal);
+		context.write(new Text(unMatchLabel + "\t" + matchedLabel), new Text(value.toString() + "," + unmatchedSentiVal+ "," + matchedSentiVal));
+	}
+	
+	// calculates the sentiment values
+	private int calculateSentimentValue(String pros, String cons, boolean matched) {
+        int sentimentValue = 0;
+        // breaks into tokens
+        String[] prosToken = pros.split("\\s+");
+        String[] consToken = cons.split("\\s+");
+        // for loops and find a hit in the hashmap, if present, add the value
+        // matched = true for only taking positive for pros and negative for cons
+        for (String pro : prosToken) {
+            if (sentimentScores.containsKey(pro)) {
+                int score = sentimentScores.get(pro);
+                if (matched && score > 0) {
+                    sentimentValue += score;
+                } else if (matched == false) {
+                	sentimentValue += score;
+                }
+            }
+        }
+        for (String con : consToken) {
+            if (sentimentScores.containsKey(con)) {
+                int score = sentimentScores.get(con);
+                if (matched && score < 0) {
+                    sentimentValue += score;
+                } else if (matched == false) {
+                	sentimentValue += score;
+                }
+            }
+        }
+        
+        return sentimentValue;
+    }
+	
+	// Utility function for labeling the sentiment
+	private String getSentimentLabel(int sentimentValue) {
+		if (sentimentValue == 0) {
+			return "neutral";
+		} else if (sentimentValue < 0) {
+			return "negative";
 		} else {
-			outputUnmatched = "positive";
+			return "positive";
 		}
-		
-		for (String word : tokenPros) {
-			// Check if the word is in the hashtable
-			if (wordTable.containsKey(word)) {
-				if (wordTable.get(word) > 0) {
-					matchedSentiVal += wordTable.get(word);
-				}
-			}
-		}
-		for (String con : tokenCons) {
-			if (wordTable.containsKey(con)) {
-				if (wordTable.get(con) < 0) {
-					matchedSentiVal += wordTable.get(con);
-				}
-			}
-		}
-		
-		if (matchedSentiVal == 0) {
-			outputMatched = "neutral";
-		} else if (unmatchedSentiVal < 0) {
-			outputMatched = "negative";
-		} else {
-			outputMatched = "positive";
-		}
-		context.write(new Text(outputUnmatched + "\t" + outputMatched), new Text(value.toString() + "," + unmatchedSentiVal.toString()+ "," + matchedSentiVal.toString()));
 	}
 }

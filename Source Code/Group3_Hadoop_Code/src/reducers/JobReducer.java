@@ -13,6 +13,7 @@ public class JobReducer extends Reducer<Text, Text, Text, IntWritable>{
 		int countPos = 0;
 		int countNeg = 0;
 		int countNeu = 0;
+		// for loop to count the amount of sentiments for a selected job
 		for(Text senti: values) {
 			if (senti.toString().equals("neutral")) {
 				countNeu ++;
@@ -26,5 +27,4 @@ public class JobReducer extends Reducer<Text, Text, Text, IntWritable>{
 		context.write(new Text(key.toString() + " Negative:"), new IntWritable(countNeg));
 		context.write(new Text(key.toString() + " Neutral:"), new IntWritable(countNeu));
 	}
-	
 }
