@@ -62,6 +62,24 @@ matchedConDict = {}
 unmatchedProDict = {}
 unmatchedConDict = {}
 
+# accuracy arrays
+accuracyTitle = []
+accuracyCategory = []
+accuracyValue = []
+accuracyArray = [accuracyTitle, accuracyCategory, accuracyValue]
+
+# read accuracy file
+def readAccuracy():
+    with open(os.path.join(sys.path[0], 'ict2107_flask/accuracy'), 'r') as foo:
+        for i, line in enumerate(foo):
+            lineArray = line.split("\t")
+            accuracyTitle.append(lineArray[0])
+            backStr = lineArray[1].removesuffix("\n")
+            backStrArray = backStr.split(": ")
+            accuracyCategory.append(backStrArray[0])
+            accuracyValue.append(backStrArray[1])
+
+
 # index at which pros become cons back to pros so an output of 
 # [a,b,c,...] means pros will be from index 0 till a-1, cons will be from a to b-1, pros will be from b to c-1 etc etc
 prosConsChangesIndex = [] 
@@ -292,6 +310,8 @@ class getArrays:
     # def getWordCloud_indexSentim(): return sentiChangesIndex
     # def getWordCloud_indexProsCons(): return prosConsChangesIndex
 
+    def getAccuracy(): return accuracyArray
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -300,6 +320,7 @@ def index():
     readBarPlotJobs()   # Reads barPlotJobs data and puts it into the arrays
     readSentiments()    # Reads sentiment data and puts it into the arrays
     readWordCloud()     # Reads wordcloud data and puts it into arrays
+    readAccuracy()
 
     # redirect to graph main page
     return redirect("/barPlot/matchedJob", code=302)

@@ -47,9 +47,9 @@ def sentimentTable(title, values):
     unmatchedIndexArray = []
     unmatchedValueArray = []
     for i, value in enumerate(values[0]):
-        matchedIndexArray.append(int(i))
+        matchedIndexArray.append(int(i + 1))
         matchedValueArray.append(int(values[4][i]))
-        unmatchedIndexArray.append(int(i))
+        unmatchedIndexArray.append(int(i + 1))
         unmatchedValueArray.append(int(values[5][i]))
 
     fig = make_subplots(
