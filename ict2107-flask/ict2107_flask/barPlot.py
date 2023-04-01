@@ -23,19 +23,19 @@ def barPlot(type):
     if (type == "matchedJob"):
         title = "Matched Job Satisfaction Bar Plot"
         # get job bar plot data
-        labels = getArrays.getJobsArrayBPJ()
-        originalPos = getArrays.getPositiveArrayBPJ()
-        originalNeg = getArrays.getNegativeArrayBPJ()
-        originalNeutral = getArrays.getNeutralArrayBPJ()
+        labels = getArrays.getMatchedJobsArrayBPJ()
+        originalPos = getArrays.getMatchedPositiveArrayBPJ()
+        originalNeg = getArrays.getMatchedNegativeArrayBPJ()
+        originalNeutral = getArrays.getMatchedNeutralArrayBPJ()
         bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
     elif (type == "unmatchedJob"):
         title = "Unmatched Job Satisfaction Bar Plot"
         # get job bar plot data
-        labels = getArrays.getJobsArrayBPJ()
-        originalPos = getArrays.getPositiveArrayBPJ()
-        originalNeg = getArrays.getNegativeArrayBPJ()
-        originalNeutral = getArrays.getNeutralArrayBPJ()
+        labels = getArrays.getUnmatchedJobsArrayBPJ()
+        originalPos = getArrays.getUnmatchedPositiveArrayBPJ()
+        originalNeg = getArrays.getUnmatchedNegativeArrayBPJ()
+        originalNeutral = getArrays.getUnmatchedNeutralArrayBPJ()
         bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
     elif (type == "matchedYear"):
@@ -43,9 +43,14 @@ def barPlot(type):
         # get year bar plot data
         labels = getArrays.getYearArrBPY()
         originalPos = getArrays.getPositiveArrBPY()
-        print(getArrays.getPositiveArrBPY())
         originalNeg = getArrays.getNegativeArrBPY()
         originalNeutral = getArrays.getNeutralArrBPY()
+
+        labels = labels[:len(labels)//2]
+        originalPos = originalPos[:len(originalPos)//2]
+        originalNeg = originalNeg[:len(originalNeg)//2]
+        originalNeutral = originalNeutral[:len(originalNeutral)//2]
+        
         bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
     elif (type == "unmatchedYear"):
@@ -55,6 +60,12 @@ def barPlot(type):
         originalPos = getArrays.getPositiveArrBPY()
         originalNeg = getArrays.getNegativeArrBPY()
         originalNeutral = getArrays.getNeutralArrBPY()
+
+        labels = labels[len(labels)//2:]
+        originalPos = originalPos[len(originalPos)//2:]
+        originalNeg = originalNeg[len(originalNeg)//2:]
+        originalNeutral = originalNeutral[len(originalNeutral)//2:]
+
         bar = plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral)
         return render_template("barPlot.html", plot=bar)
 

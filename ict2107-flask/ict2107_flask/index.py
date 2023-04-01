@@ -17,11 +17,15 @@ yearArrayBPY = []      # [year]
 
 # Definitions for job_sentiment
 matchesBPJ = []         # match/ unmatched 
-jobsArrayBPJ = []       # jobs 
 sentimentsArrayBPJ = [] # sentiments 
-positiveArrayBPJ = []  # [positive] 
-negativeArrayBPJ = []  # [negative] 
-neutralArrayBPJ = []   # [neutral] 
+matchedJobsArrayBPJ = []       # jobs 
+matchedPositiveArrayBPJ = []  # [positive] 
+matchedNegativeArrayBPJ = []  # [negative] 
+matchedNeutralArrayBPJ = []   # [neutral] 
+unmatchedJobsArrayBPJ = []       # jobs 
+unmatchedPositiveArrayBPJ = []  # [positive] 
+unmatchedNegativeArrayBPJ = []  # [negative] 
+unmatchedNeutralArrayBPJ = []   # [neutral] 
 
 # definitions for sentiments
 matchedSentiment = []       # matched sentiments - pos/neg/neutral
@@ -77,18 +81,30 @@ def readBarPlotYear():
                 sentimentArr[1] = sentimentArr[1].strip()
                 neutralArrayBPY.append(int(sentimentArr[1])) 
 
+
 def readBarPlotJobs():
     with open(os.path.join(sys.path[0], 'ict2107_flask/job_sentiment'), 'r') as foo:
         for index, line in enumerate(foo):
             fooArray = line.split("\t")     # ['matched', 'jobs:', '1']
-            matchesBPJ.append(fooArray[0])
-            if ((index + 1) % 3 == 0):
-                neutralArrayBPJ.append(int(fooArray[2]))
-                jobsArrayBPJ.append(fooArray[1].removesuffix('Neutral:'))
-            elif ((index + 1) % 3 == 1):
-                positiveArrayBPJ.append(int(fooArray[2]))
-            elif ((index + 1) % 3 == 2):
-                negativeArrayBPJ.append(int(fooArray[2]))
+            if (fooArray[0] == "Matched"):
+                # matchesBPJ.append(fooArray[0])
+                if ((index + 1) % 3 == 0):
+                    matchedNeutralArrayBPJ.append(int(fooArray[2]))    #neutralArrayBPJ.append(int(fooArray[2]))
+                    matchedJobsArrayBPJ.append(fooArray[1].removesuffix('Neutral:'))    #jobsArrayBPJ.append(fooArray[1].removesuffix('Neutral:'))
+                elif ((index + 1) % 3 == 1):
+                    matchedPositiveArrayBPJ.append(int(fooArray[2]))    #positiveArrayBPJ.append(int(fooArray[2]))
+                elif ((index + 1) % 3 == 2):
+                    matchedNegativeArrayBPJ.append(int(fooArray[2]))    #negativeArrayBPJ.append(int(fooArray[2]))
+            elif (fooArray[0] == "UnMatched"):
+                # matchesBPJ.append(fooArray[0])
+                if ((index + 1) % 3 == 0):
+                    unmatchedNeutralArrayBPJ.append(int(fooArray[2]))
+                    unmatchedJobsArrayBPJ.append(fooArray[1].removesuffix('Neutral:'))
+                elif ((index + 1) % 3 == 1):
+                    unmatchedPositiveArrayBPJ.append(int(fooArray[2]))
+                elif ((index + 1) % 3 == 2):
+                    unmatchedNegativeArrayBPJ.append(int(fooArray[2]))
+
 
 def readSentiments():
     with open(os.path.join(sys.path[0], 'ict2107_flask/sentiment_raw'), 'r') as foo:
@@ -205,10 +221,14 @@ class getArrays:
     
     # For bar plot jobs
     def getMatchBPY(): return matchesBPY
-    def getJobsArrayBPJ():return jobsArrayBPJ
-    def getPositiveArrayBPJ(): return positiveArrayBPJ
-    def getNegativeArrayBPJ(): return negativeArrayBPJ
-    def getNeutralArrayBPJ(): return neutralArrayBPJ
+    def getMatchedJobsArrayBPJ():return matchedJobsArrayBPJ
+    def getMatchedPositiveArrayBPJ(): return matchedPositiveArrayBPJ
+    def getMatchedNegativeArrayBPJ(): return matchedNegativeArrayBPJ
+    def getMatchedNeutralArrayBPJ(): return matchedNeutralArrayBPJ
+    def getUnmatchedJobsArrayBPJ():return unmatchedJobsArrayBPJ
+    def getUnmatchedPositiveArrayBPJ(): return unmatchedPositiveArrayBPJ
+    def getUnmatchedNegativeArrayBPJ(): return unmatchedNegativeArrayBPJ
+    def getUnmatchedNeutralArrayBPJ(): return unmatchedNeutralArrayBPJ
     
     # For sentiments
     # def getSentiments(): return allInOne
@@ -231,10 +251,10 @@ class getArrays:
 @app.route("/", methods=["GET", "POST"])
 def index():
     # read all data at the start
-    # readBarPlotYear()   # Reads barPlotYear data and puts it into the arrays
-    # readBarPlotJobs()   # Reads barPlotJobs data and puts it into the arrays
+    readBarPlotYear()   # Reads barPlotYear data and puts it into the arrays
+    readBarPlotJobs()   # Reads barPlotJobs data and puts it into the arrays
     readSentiments()    # Reads sentiment data and puts it into the arrays
-    # readWordCloud()     # Reads wordcloud data and puts it into arrays
+    readWordCloud()     # Reads wordcloud data and puts it into arrays
 
     # redirect to graph main page
     return redirect("/barPlot/matchedJob", code=302)
