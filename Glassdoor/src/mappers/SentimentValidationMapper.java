@@ -9,30 +9,46 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SentimentValidationMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
-	List<String> stopWords;
+	List<String> stopWords = new ArrayList<>();
+	Map<String, String> lemmingMap = new HashMap<>();
 
 	@Override
-	protected void setup(Mapper<LongWritable, Text, LongWritable, Text>.Context context) throws IOException, InterruptedException {
-		List<String> words = new ArrayList<>();
-		BufferedReader br = new BufferedReader(new FileReader("stopwords.txt"));
+	protected void setup(Mapper<LongWritable, Text, LongWritable, Text>.Context context)
+			throws IOException, InterruptedException {
+		BufferedReader stopWordBR = new BufferedReader(new FileReader("stopwords.txt"));
 		String line = null;
 		while (true) {
-			line = br.readLine();
+			line = stopWordBR.readLine();
 			if (line != null) {
-				words.add(line.trim());
+				stopWords.add(line.trim());
 			} else {
 				break; // finished reading
 			}
 		}
-		br.close();
-		stopWords = words;
+		stopWordBR.close();
+		BufferedReader lemmBR = new BufferedReader(new FileReader("lemm.tsv"));
+		while (true) {
+			line = lemmBR.readLine();
+			if (line != null) {
+				String[] parts = line.split("\t");
+				if (parts.length == 2) {
+					lemmingMap.put(parts[1], parts[0]);
+				}
+			} else {
+				break; // finished reading
+			}
+		}
+		lemmBR.close();
 	}
 
 	@Override
-	protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, LongWritable, Text>.Context context) throws IOException, InterruptedException {
+	protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, LongWritable, Text>.Context context)
+			throws IOException, InterruptedException {
 		String rowValue = value.toString();
 		rowValue = cleanData(rowValue);
 		if (isValid(rowValue)) {
@@ -61,20 +77,21 @@ public class SentimentValidationMapper extends Mapper<LongWritable, Text, LongWr
 				continue;
 			}
 			line[i] = line[i].replaceAll("[^a-zA-Z0-9\\s]", "");
-			line[i] = removeStopWords(line[i]);
 			line[i] = line[i].toLowerCase();
 			line[i] = line[i].trim();
+			line[i] = removeStopWords(line[i]);
+			line[i] = lemmString(line[i]);
 		}
-		String output = makeString(line);
+		String output = makeString(line,",");
 		return output;
 	}
 
-	private String makeString(String[] parts) {
+	private String makeString(String[] parts, String delimiter) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < parts.length; i++) {
 			sb.append(parts[i]);
 			if (i < parts.length - 1) {
-				sb.append(",");
+				sb.append(delimiter);
 			}
 		}
 		return sb.toString();
@@ -87,10 +104,22 @@ public class SentimentValidationMapper extends Mapper<LongWritable, Text, LongWr
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < wordsList.size(); i++) {
 			sb.append(wordsList.get(i));
-			if (i<wordsList.size() - 1) {
+			if (i < wordsList.size() - 1) {
 				sb.append(" ");
 			}
 		}
-		return sb.toString();
+		return makeString(wordsList.toArray(new String[0])," ");
+	}
+	
+	private String lemmString(String text) {
+		String[] tokens = text.split("\\s+");
+		String lemmedWord;
+		for (int i = 0; i<tokens.length;i++) {
+			lemmedWord = lemmingMap.get(tokens[i]);
+			if(lemmedWord != null) {
+				tokens[i] = lemmedWord;
+			}
+		}
+		return makeString(tokens, " ");
 	}
 }

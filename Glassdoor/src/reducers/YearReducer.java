@@ -14,14 +14,14 @@ public class YearReducer extends Reducer<Text, Text, Text, IntWritable>{
 		int negCount = 0;
 		int totalYear = 0;
 		for (Text value: values) {
-			String sentiment[] = value.toString().split("\t");
-			if (sentiment[1].equals("positive")) {
+			String sentiment = value.toString();
+			if (sentiment.equals("positive")) {
 				posCount ++;
 			}
-			if (sentiment[1].equals("negative")) {
+			if (sentiment.equals("negative")) {
 				negCount ++;
 			}
-			if (sentiment[1].equals("neutral")) {
+			if (sentiment.equals("neutral")) {
 				neuCount++;
 			}
 			totalYear++;

@@ -1,4 +1,5 @@
 package mappers;
+
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -12,10 +13,11 @@ public class SentimentMapper extends Mapper<LongWritable, Text, Text, Text> {
 	Hashtable<String, Integer> wordTable = new Hashtable<>();
 
 	@Override
-	protected void setup(Mapper<LongWritable, Text, Text, Text>.Context context) throws IOException, InterruptedException {
+	protected void setup(Mapper<LongWritable, Text, Text, Text>.Context context)
+			throws IOException, InterruptedException {
 		BufferedReader br = new BufferedReader(new FileReader("AFINN.tsv"));
 		String line = null;
-		br.readLine();;
+		br.readLine();
 		while (true) {
 			line = br.readLine();
 			if (line != null) {
@@ -36,43 +38,65 @@ public class SentimentMapper extends Mapper<LongWritable, Text, Text, Text> {
 				break; // finished reading
 			}
 		}
-
 		br.close();
 	}
 
 	@Override
-	protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, Text, Text>.Context context) throws IOException, InterruptedException {
+	protected void map(LongWritable key, Text value, Mapper<LongWritable, Text, Text, Text>.Context context)
+			throws IOException, InterruptedException {
 		String[] parts = value.toString().split(",");
 		String pros = parts[3];
 		String cons = parts[4];
-		Integer intVal = 0;
-		String output;
-		if (pros != null) {
-			String[] words = pros.split("\\s+");
-			String[] tokenCons = cons.split("\\s+");
-			// Loop through the words in the array
-			for (String word : words) {
-				// Check if the word is in the hashtable
-				if (wordTable.containsKey(word)) {
-					// If the value associated with the word is positive, write the word and its
-					// value to the context
-					intVal += wordTable.get(word);
-				}
+		Integer unmatchedSentiVal = 0;
+		Integer matchedSentiVal = 0;
+		String outputMatched;
+		String outputUnmatched;
+		String[] tokenPros = pros.split("\\s+");
+		String[] tokenCons = cons.split("\\s+");
+		// Loop through the words in the array
+		for (String word : tokenPros) {
+			// Check if the word is in the hashtable
+			if (wordTable.containsKey(word)) {
+				// If the value associated with the word is positive, write the word and its value to the context
+				unmatchedSentiVal += wordTable.get(word);
 			}
-			for (String con : tokenCons) {
-				if (wordTable.containsKey(con)) {
-					intVal += wordTable.get(con);
-				}
-			}
-			if(intVal == 0 ) {
-				output = "neutral";
-			} else if (intVal < 0) {
-				output = "negative";
-			} else {
-				output = "positive";
-			}
-			context.write(new Text(output), new Text(value.toString() + ","+ intVal.toString()));
 		}
+		for (String con : tokenCons) {
+			if (wordTable.containsKey(con)) {
+				unmatchedSentiVal += wordTable.get(con);
+			}
+		}
+		if (unmatchedSentiVal == 0) {
+			outputUnmatched = "neutral";
+		} else if (unmatchedSentiVal < 0) {
+			outputUnmatched = "negative";
+		} else {
+			outputUnmatched = "positive";
+		}
+		
+		for (String word : tokenPros) {
+			// Check if the word is in the hashtable
+			if (wordTable.containsKey(word)) {
+				if (wordTable.get(word) > 0) {
+					matchedSentiVal += wordTable.get(word);
+				}
+			}
+		}
+		for (String con : tokenCons) {
+			if (wordTable.containsKey(con)) {
+				if (wordTable.get(con) < 0) {
+					matchedSentiVal += wordTable.get(con);
+				}
+			}
+		}
+		
+		if (matchedSentiVal == 0) {
+			outputMatched = "neutral";
+		} else if (unmatchedSentiVal < 0) {
+			outputMatched = "negative";
+		} else {
+			outputMatched = "positive";
+		}
+		context.write(new Text(outputUnmatched + "\t" + outputMatched), new Text(value.toString() + "," + unmatchedSentiVal.toString()+ "," + matchedSentiVal.toString()));
 	}
-
 }

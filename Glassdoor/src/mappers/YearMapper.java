@@ -12,18 +12,29 @@ public class YearMapper extends Mapper<Text, Text, Text, Text> {
 			throws IOException, InterruptedException {
 		String[] parts = value.toString().split(",");
 		String[] dateStr = parts[5].split("\\s+");
+		String[] diffKey = key.toString().split("\t");
 		try {
-			if (Float.parseFloat(parts[6]) > 0.0) {
-				context.write(new Text(dateStr[2]), new Text("year\tpositive"));
+			String year = dateStr[2];
+			if (diffKey[0].equals("positive")) {
+				context.write(new Text("UnMatched\t" + year), new Text(diffKey[0]));
 			}
-			if (Float.parseFloat(parts[6]) < 0.0) {
-				context.write(new Text(dateStr[2]), new Text("year\tnegative"));
+			if (diffKey[0].equals("negative")) {
+				context.write(new Text("UnMatched\t" + year), new Text(diffKey[0]));
 			}
-			if (Float.parseFloat(parts[6]) == 0.0) {
-				context.write(new Text(dateStr[2]), new Text("year\tneutral"));
+			if (diffKey[0].equals("neutral")) {
+				context.write(new Text("UnMatched\t" + year), new Text(diffKey[0]));
 			}
-		} catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
-			System.out.println("Write fail");
+			if (diffKey[1].equals("positive")) {
+				context.write(new Text("Matched\t" + year), new Text(diffKey[0]));
+			}
+			if (diffKey[1].equals("negative")) {
+				context.write(new Text("Matched\t" + year), new Text(diffKey[1]));
+			}
+			if (diffKey[1].equals("neutral")) {
+				context.write(new Text("Matched\t" + year), new Text(diffKey[0]));
+			}
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			System.out.println("OUt of Bounds");
 		}
 	}
 }
