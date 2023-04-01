@@ -53,6 +53,14 @@ unmatchedWordCloud = []
 wordQtyWordCloud = []
 sentiChangesIndex = []  #index at which negative becomes neutral becomes positive
 matchChangesIndex = []
+matchedProWords = []
+matchedConWords = []
+unmatchedProWords = []
+unmatchedConWords = []
+matchedProDict = {}
+matchedConDict = {}
+unmatchedProDict = {}
+unmatchedConDict = {}
 
 # index at which pros become cons back to pros so an output of 
 # [a,b,c,...] means pros will be from index 0 till a-1, cons will be from a to b-1, pros will be from b to c-1 etc etc
@@ -186,31 +194,51 @@ def readWordCloud():
         for i, line in enumerate(foo):
             fooArray = line.split('\t') # in the format of ['Matched', 'postive-pros', 'great 1']
 
-            if fooArray[0] != ahhh: 
-                matchChangesIndex.append(i)
-                ahhh = fooArray[0] 
+            # if (fooArray[0] == "Matched"):
+            #     # split word and number
+            #     wordSplit = fooArray[2].split(" ")
+            #     if (fooArray[1][-4:] == "pros"):
+            #         for x in range(int(wordSplit[1].removesuffix("\n"))):
+            #             matchedProWords.append(wordSplit[0])    # add word the number of times it appeared
+            #     elif (fooArray[1][-4:] == "cons"):
+            #         for x in range(int(wordSplit[1].removesuffix("\n"))):
+            #             matchedConWords.append(wordSplit[0])    # add word the number of times it appeared
+            # elif (fooArray[0] == "UnMatched"):
+            #     # split word and number
+            #     wordSplit = fooArray[2].split(" ")
+            #     if (fooArray[1][-4:] == "pros"):
+            #         for x in range(int(wordSplit[1].removesuffix("\n"))):
+            #             unmatchedProWords.append(wordSplit[0])    # add word the number of times it appeared
+            #     elif (fooArray[1][-4:] == "cons"):
+            #         for x in range(int(wordSplit[1].removesuffix("\n"))):
+            #             unmatchedConWords.append(wordSplit[0])    # add word the number of times it appeared
 
-            tmpSentiProCon = fooArray[1].split('-') # in the format of ['positive', 'pros']
-            
-            if ah != tmpSentiProCon[0]: sentiChangesIndex.append(i)
-            ah = tmpSentiProCon[0]
-            sentimentWordCloud.append(tmpSentiProCon[0])
-            proConNeutralWordCloud.append(tmpSentiProCon[1])
-
-            if ahh != tmpSentiProCon[1]: prosConsChangesIndex.append(i)
-            ahh = tmpSentiProCon[1]
-            
-            tmpWrdQty = fooArray[2].split(' ')      # in the format of ['great', '1']
-            
-            werdCloud.append(tmpWrdQty[0])
-            wordQtyWordCloud.append(int(tmpWrdQty[1]))
-    
-    matchedWordCloud.append(' '.join(werdCloud[0:matchChangesIndex[0]]))
-    unmatchedWordCloud.append(' '.join(werdCloud[matchChangesIndex[0]:]))
-
-
-
-
+            if (fooArray[0] == "Matched"):
+                # split word and number
+                wordSplit = fooArray[2].split(" ")
+                if (fooArray[1][-4:] == "pros"):
+                    if (wordSplit[0] in matchedProDict):
+                        matchedProDict[wordSplit[0]] += int(wordSplit[1].removesuffix("\n"))
+                    else:
+                        matchedProDict[wordSplit[0]] = int(wordSplit[1].removesuffix("\n"))    # add word the number of times it appeared
+                elif (fooArray[1][-4:] == "cons"):
+                    if (wordSplit[0] in matchedConDict):
+                        matchedConDict[wordSplit[0]] += int(wordSplit[1].removesuffix("\n"))
+                    else:
+                        matchedConDict[wordSplit[0]] = int(wordSplit[1].removesuffix("\n"))    # add word the number of times it appeared
+            elif (fooArray[0] == "UnMatched"):
+                # split word and number
+                wordSplit = fooArray[2].split(" ")
+                if (fooArray[1][-4:] == "pros"):
+                    if (wordSplit[0] in unmatchedProDict):
+                        unmatchedProDict[wordSplit[0]] += int(wordSplit[1].removesuffix("\n"))
+                    else:
+                        unmatchedProDict[wordSplit[0]] = int(wordSplit[1].removesuffix("\n"))    # add word the number of times it appeared
+                elif (fooArray[1][-4:] == "cons"):
+                    if (wordSplit[0] in unmatchedConDict):
+                        unmatchedConDict[wordSplit[0]] += int(wordSplit[1].removesuffix("\n"))
+                    else:
+                        unmatchedConDict[wordSplit[0]] = int(wordSplit[1].removesuffix("\n"))    # add word the number of times it appeared
         
 
 class getArrays:
@@ -241,18 +269,28 @@ class getArrays:
 
     # For wordcloud
     # def getWordCloud_match(): return matchWordCloud
-    def getWordCloud_indexMatchChange(): return matchChangesIndex[0]
-    def getWordCloud_word(): return werdCloud
-    def getWordCloud_allTheWordsStr(): return ' '.join(werdCloud)
+    # def getWordCloud_indexMatchChange(): return matchChangesIndex[0]
+    # def getWordCloud_word(): return werdCloud
+    # def getWordCloud_allTheWordsStr(): return ' '.join(werdCloud)
 
     def getWordCloud_matchedStr(): return ' '.join(matchedWordCloud)
     def getWordCloud_unmatchedStr(): return ' '.join(unmatchedWordCloud)
 
-    def getWordCloud_qty(): return wordQtyWordCloud
-    def getWordCloud_sentiment(): return sentimentWordCloud
-    def getWordCloud_proConNeutral(): return proConNeutralWordCloud
-    def getWordCloud_indexSentim(): return sentiChangesIndex
-    def getWordCloud_indexProsCons(): return prosConsChangesIndex
+    # def getWordCloud_matchedProStr(): return ' '.join(matchedProWords)
+    # def getWordCloud_matchedConStr(): return ' '.join(matchedConWords)
+    # def getWordCloud_unmatchedProStr(): return ' '.join(unmatchedProWords)
+    # def getWordCloud_unmatchedConStr(): return ' '.join(unmatchedConWords)
+
+    def getWordCloud_matchedProDict(): return matchedProDict
+    def getWordCloud_matchedConDict(): return matchedConDict
+    def getWordCloud_unmatchedProDict(): return unmatchedProDict
+    def getWordCloud_unmatchedConDict(): return unmatchedConDict
+
+    # def getWordCloud_qty(): return wordQtyWordCloud
+    # def getWordCloud_sentiment(): return sentimentWordCloud
+    # def getWordCloud_proConNeutral(): return proConNeutralWordCloud
+    # def getWordCloud_indexSentim(): return sentiChangesIndex
+    # def getWordCloud_indexProsCons(): return prosConsChangesIndex
 
 
 @app.route("/", methods=["GET", "POST"])

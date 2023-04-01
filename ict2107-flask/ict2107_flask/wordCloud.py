@@ -22,26 +22,27 @@ from io import BytesIO
 def wordCloud(type):
     if (type == "matchedPros"):
         # get word cloud data
-        cloud = plotlyWordCloud(getArrays.getWordCloud_matchedStr())
+        cloud = matplotlibWordCloud(getArrays.getWordCloud_matchedProDict())
+        # cloud = matplotlibWordCloud(" there world world world there hello hello hello hello hello hello")
         return render_template("wordCloud.html", plot=cloud, title="Matched Pros Word Cloud")
     elif (type == "matchedCons"):
         # get word cloud data
-        cloud = plotlyWordCloud(getArrays.getWordCloud_matchedStr())
+        cloud = matplotlibWordCloud(getArrays.getWordCloud_matchedConDict())
         return render_template("wordCloud.html", plot=cloud, title="Matched Cons Word Cloud")
     elif (type == "unmatchedPros"):
         # get word cloud data
-        cloud = plotlyWordCloud(getArrays.getWordCloud_unmatchedStr())
+        cloud = matplotlibWordCloud(getArrays.getWordCloud_unmatchedProDict())
         return render_template("wordCloud.html", plot=cloud, title="Unmatched Pros Word Cloud")
     elif (type == "unmatchedCons"):
         # get word cloud data
-        cloud = plotlyWordCloud(getArrays.getWordCloud_unmatchedStr())
+        cloud = matplotlibWordCloud(getArrays.getWordCloud_unmatchedConDict())
         return render_template("wordCloud.html", plot=cloud, title="Unmatched Cons Word Cloud")
 
 
-def plotlyWordCloud(text):
+def matplotlibWordCloud(text):
     # Create and generate a word cloud image:
-    wordcloud = WordCloud(background_color="white").generate(text)
-
+    # wordcloud = WordCloud(collocations=False, background_color="white").generate(text)
+    wordcloud = WordCloud(background_color="white").generate_from_frequencies(text)
     # Display the generated image:
     fig = plt.figure()
     plt.imshow(wordcloud, interpolation='bilinear')
