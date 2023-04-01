@@ -12,13 +12,21 @@
         <a href="/barPlot/matchedJob">Bar Plot</a> | 
         <a href="/wordCloud/matchedPros">Word Cloud</a> | 
         <a href="/table/negative">Sentiments Table</a> | 
-        <a href="/accuracy">Accuracy</a>
+        <a href="/accuracy">Accuracy</a> | 
+        <a href="/aboutUs">About Us</a>
     </nav>
+</div>
+<div>
+    <p><b>Matched: </b><br/>
+        Sentiment values are only taken into account when it is a positive value in pros, and negative value in cons. </p>
+    <p><b>Unmatched: </b><br/>
+        Sentiment values are taken into account no matter where the words are found at.<br/>
+        E.g. Positive sentiment values found in the cons section will still be taken into account.</p>
 </div>
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-            <div class="chart" id="bargraph" style="height: 1400px; overflow-y: auto;">
+            <div class="chart" id="bargraph" style="height: 1050px; overflow-y: auto;">
                 <script>
                     var graphs = {{plot | safe}};
                     Plotly.plot('bargraph',graphs,{});

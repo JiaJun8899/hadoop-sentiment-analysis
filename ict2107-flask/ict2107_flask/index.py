@@ -67,17 +67,29 @@ accuracyTitle = []
 accuracyCategory = []
 accuracyValue = []
 accuracyArray = [accuracyTitle, accuracyCategory, accuracyValue]
+matchedAccuracyArray = [[],[]]
+unmatchedAccuracyArray = [[],[]]
 
 # read accuracy file
 def readAccuracy():
     with open(os.path.join(sys.path[0], 'ict2107_flask/accuracy'), 'r') as foo:
         for i, line in enumerate(foo):
             lineArray = line.split("\t")
-            accuracyTitle.append(lineArray[0])
-            backStr = lineArray[1].removesuffix("\n")
-            backStrArray = backStr.split(": ")
-            accuracyCategory.append(backStrArray[0])
-            accuracyValue.append(backStrArray[1])
+            if (lineArray[0] == "Matched"):
+                backStr = lineArray[1].removesuffix("\n")
+                backStrArray = backStr.split(": ")
+                matchedAccuracyArray[0].append(backStrArray[0])
+                matchedAccuracyArray[1].append(backStrArray[1])
+            elif (lineArray[0] == "UnMatched"):
+                backStr = lineArray[1].removesuffix("\n")
+                backStrArray = backStr.split(": ")
+                unmatchedAccuracyArray[0].append(backStrArray[0])
+                unmatchedAccuracyArray[1].append(backStrArray[1])
+            # accuracyTitle.append(lineArray[0])
+            # backStr = lineArray[1].removesuffix("\n")
+            # backStrArray = backStr.split(": ")
+            # accuracyCategory.append(backStrArray[0])
+            # accuracyValue.append(backStrArray[1])
 
 
 # index at which pros become cons back to pros so an output of 
@@ -310,7 +322,8 @@ class getArrays:
     # def getWordCloud_indexSentim(): return sentiChangesIndex
     # def getWordCloud_indexProsCons(): return prosConsChangesIndex
 
-    def getAccuracy(): return accuracyArray
+    def getMatchedAccuracy(): return matchedAccuracyArray
+    def getUnmatchedAccuracy(): return unmatchedAccuracyArray
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -332,3 +345,8 @@ def index():
         # f'<p> The final returned array is: {getArrays.getWordCloud_unmatchedStr()}</p>\n'        
         # render_template("upload.html")
     )
+
+
+@app.route("/aboutUs")
+def aboutUs():
+    return render_template("aboutUs.html")

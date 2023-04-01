@@ -28,15 +28,36 @@ def table(sentim):
     if (sentim == "negative"):
         values = getArrays.getNegativeSentiments()
         table = sentimentTable("Matched Negative Sentiments", values)
-        return render_template("table.html", plot=table)
+        average = 0
+        for rating in values[6]:
+            try:
+                average += float(rating)
+            except ValueError:
+                print("Not a float")
+        average = average / len(values[6])
+        return render_template("table.html", plot=table, average='{0:.2f}'.format(average))
     elif (sentim == "positive"):
         values = getArrays.getPositiveSentiments()
         table = sentimentTable("Matched Positive Sentiments", values)
-        return render_template("table.html", plot=table)
+        average = 0
+        for rating in values[6]:
+            try:
+                average += float(rating)
+            except ValueError:
+                print("Not a float")
+        average = average / len(values[6])
+        return render_template("table.html", plot=table, average='{0:.2f}'.format(average))
     elif (sentim == "neutral"):
         values = getArrays.getNeutralSentiments()
         table = sentimentTable("Matched Neutral Sentiments", values)
-        return render_template("table.html", plot=table)
+        average = 0
+        for rating in values[6]:
+            try:
+                average += float(rating)
+            except ValueError:
+                print("Not a float")
+        average = average / len(values[6])
+        return render_template("table.html", plot=table, average='{0:.2f}'.format(average))
 
 
 def sentimentTable(title, values):
@@ -73,9 +94,9 @@ def sentimentTable(title, values):
                 ['Unmatched Sentiment Value'],
                 ['Rating'],
                 ['Job Title'],
-                ['Summary'],
-                ['Pros'],
-                ['Cons']],
+                ['Summary Tokens'],
+                ['Pros Tokens'],
+                ['Cons Tokens']],
         line_color='darkslategray',
         fill_color='royalblue',
         align=['left','center','center','center','center','center','center','center','left','left','left'],
