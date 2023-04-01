@@ -264,12 +264,12 @@ def index():
     readWordCloud()     # Reads wordcloud data and puts it into arrays
 
     # redirect to graph main page
-    # return redirect("/barPlot/matchedJob", code=302)
+    return redirect("/barPlot/matchedJob", code=302)
 
     return (
         # f'<p><br> MatchedArr: {matchesBPY}<br> YearArr: {yearArrayBPY} <br> PositiveArr: {positiveArrayBPY}<br> NegativeArr: {negativeArrayBPY} <br> NeutralArr: {neutralArrayBPY}<p>\n'
         # f'<p> <br> matchesArr:{matchesBPJ} <br> JobsArr: {jobsArrayBPJ} <br> PositiveArr: {positiveArrayBPJ}<br> NegativeArr: {negativeArrayBPJ} <br> NeutralArr: {neutralArrayBPJ}<p>\n'        
         # f'<p> The final returned array is: {getArrays.getSentiments()}</p>\n'        
-        f'<p> The final returned array is: {getArrays.getWordCloud_unmatchedStr()}</p>\n'        
+        # f'<p> The final returned array is: {getArrays.getWordCloud_unmatchedStr()}</p>\n'        
         # render_template("upload.html")
     )

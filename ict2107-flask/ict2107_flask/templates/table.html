@@ -10,7 +10,7 @@
 <div>
     <nav>
         <a href="/barPlot/matchedJob">Bar Plot</a> | 
-        <a href="/wordCloud/matched">Word Cloud</a> | 
+        <a href="/wordCloud/matchedPros">Word Cloud</a> | 
         <a href="/table/negative">Sentiments Table</a>
     </nav>
 </div>
@@ -29,6 +29,21 @@
                 <script>
                     var graphs = {{plot | safe}};
                     Plotly.plot('bargraph',graphs,{});
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart" id="bargraph" style="height: 700px; overflow-y: auto;">
+                <script>
+                    var scatterGraph = {{scatter | safe}};
+                    Plotly.plot('bargraph',scatterGraph,{});
                 </script>
             </div>
         </div>

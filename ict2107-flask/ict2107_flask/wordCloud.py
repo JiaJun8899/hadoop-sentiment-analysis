@@ -20,14 +20,22 @@ from io import BytesIO
 
 @app.route('/wordCloud/<path:type>')
 def wordCloud(type):
-    if (type == "matched"):
+    if (type == "matchedPros"):
         # get word cloud data
-        cloud = plotlyWordCloud(getArrays.getWordCloud_allTheWordsStr())
-        return render_template("wordCloud.html", plot=cloud, title="Matched Word Cloud")
-    elif (type == "unmatched"):
+        cloud = plotlyWordCloud(getArrays.getWordCloud_matchedStr())
+        return render_template("wordCloud.html", plot=cloud, title="Matched Pros Word Cloud")
+    elif (type == "matchedCons"):
         # get word cloud data
-        cloud = plotlyWordCloud(getArrays.getWordCloud_allTheWordsStr())
-        return render_template("wordCloud.html", plot=cloud, title="Unmatched Word Cloud")
+        cloud = plotlyWordCloud(getArrays.getWordCloud_matchedStr())
+        return render_template("wordCloud.html", plot=cloud, title="Matched Cons Word Cloud")
+    elif (type == "unmatchedPros"):
+        # get word cloud data
+        cloud = plotlyWordCloud(getArrays.getWordCloud_unmatchedStr())
+        return render_template("wordCloud.html", plot=cloud, title="Unmatched Pros Word Cloud")
+    elif (type == "unmatchedCons"):
+        # get word cloud data
+        cloud = plotlyWordCloud(getArrays.getWordCloud_unmatchedStr())
+        return render_template("wordCloud.html", plot=cloud, title="Unmatched Cons Word Cloud")
 
 
 def plotlyWordCloud(text):

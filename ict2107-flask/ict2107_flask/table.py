@@ -26,16 +26,19 @@ def table(sentim):
     # display table based on path
     if (sentim == "negative"):
         values = getArrays.getNegativeSentiments()
-        table = sentimentTable("Matched Negative Sentiments", values)
-        return render_template("table.html", plot=table)
+        # table = sentimentTable("Matched Negative Sentiments", values)
+        scatter = plotlyScatter(values)
+        return render_template("table.html", plot=table, scatter=scatter)
     elif (sentim == "positive"):
         values = getArrays.getPositiveSentiments()
-        table = sentimentTable("Matched Positive Sentiments", values)
-        return render_template("table.html", plot=table)
+        # table = sentimentTable("Matched Positive Sentiments", values)
+        scatter = plotlyScatter(values)
+        return render_template("table.html", plot=table, scatter=scatter)
     elif (sentim == "neutral"):
         values = getArrays.getNeutralSentiments()
-        table = sentimentTable("Matched Neutral Sentiments", values)
-        return render_template("table.html", plot=table)
+        # table = sentimentTable("Matched Neutral Sentiments", values)
+        scatter = plotlyScatter(values)
+        return render_template("table.html", plot=table, scatter=scatter)
 
 
 def sentimentTable(title, values):
@@ -76,6 +79,44 @@ def sentimentTable(title, values):
     )
 
     # convert to json
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return graphJSON
+
+
+def plotlyScatter(values):
+
+    # process values
+    matchedIndexArray = []
+    matchedValueArray = []
+    unmatchedIndexArray = []
+    unmatchedValueArray = []
+    for i, value in enumerate(values[0]):
+        matchedIndexArray.append(int(i))
+        matchedValueArray.append(int(values[4][i]))
+        unmatchedIndexArray.append(int(i))
+        unmatchedValueArray.append(int(values[5][i]))\
+
+    fig = go.Figure()
+    
+    fig.add_trace(go.Scatter(
+        x = matchedIndexArray,
+        y = matchedValueArray,
+        mode="markers",
+        name="Matched"
+    ))
+
+    fig.add_trace(go.Scatter(
+        x = unmatchedIndexArray,
+        y = unmatchedValueArray,
+        mode="markers",
+        name="Unmatched"
+    ))
+
+    fig.update_layout(
+        xaxis_title="Index", yaxis_title="Sentiment Value"
+    )
+
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     return graphJSON
