@@ -1,6 +1,7 @@
 from ict2107_flask import app
 from flask import Flask, render_template, request
 from matplotlib.figure import Figure
+from plotly.subplots import make_subplots
 
 from ict2107_flask.index import *
 
@@ -102,10 +103,18 @@ def plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral
 
     # colour array
     colour = ['#43AA8B', '#DB3A34', "#948D9B"]
-    # colour = ['#a172cc', '#7227b8', "#a3a0a0"]
 
-    # create graph
-    fig = go.Figure()
+
+    # create graphs
+    fig = make_subplots(
+    rows=2, cols=1,
+    vertical_spacing=0.5,
+    specs=[[{"type": "bar"}],
+           [{"type": "table"}]]
+    )
+
+    # BAR GRAPH
+    # fig = go.Figure()
     for index, key in enumerate(dataPercentage):
         fig.add_trace(go.Bar(
             name=key,
@@ -126,7 +135,8 @@ def plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral
                 # "height: %{y}",
                 # "area: %{customdata[1]}",
             ])
-        ))
+        ),
+        row=1, col=1)
 
     fig.update_xaxes(
         tickvals=np.cumsum(widths)-widths/2,
@@ -142,7 +152,34 @@ def plotlyDoubleBarPlot(title, labels, originalPos, originalNeg, originalNeutral
         barmode="stack",
         uniformtext=dict(mode="hide", minsize=10),
         xaxis=dict(rangeslider=dict(visible=True), type="linear")
-    )    
+    )
+    
+    # TABLE
+    tableArray = [labels,originalPos,originalNeg,originalNeutral]
+    fig.add_trace(go.Table(
+        columnorder = [1,2,3,4],
+        columnwidth = [20,10,10,10],
+        header = dict(
+            values = [
+                ['Jobs'],
+                ['Positive Sentiment Value'],
+                ['Negative Sentiment Value'],
+                ['Neutral Sentiment Value']],
+        line_color='darkslategray',
+        fill_color='royalblue',
+        align=['center','center','center','center'],
+        font=dict(color='white', size=12),
+        height=40,
+        ),
+        cells=dict(
+            values=tableArray,
+            line_color='darkslategray',
+            fill=dict(color=['paleturquoise','white','white','white']),
+            align=['center','center','center','center'],
+            font_size=12,
+            height=30),
+    ),
+    row=2, col=1)
 
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 

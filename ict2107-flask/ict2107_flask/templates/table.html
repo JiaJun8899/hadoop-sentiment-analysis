@@ -25,25 +25,10 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6">
-            <div class="chart" id="bargraph" style="height: 700px; overflow-y: auto;">
+            <div class="chart" id="bargraph" style="height: 1400px; overflow-y: auto;">
                 <script>
                     var graphs = {{plot | safe}};
                     Plotly.plot('bargraph',graphs,{});
-                </script>
-            </div>
-        </div>
-    </div>
-</div>
-
-</body>
-<body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="chart" id="bargraph" style="height: 700px; overflow-y: auto;">
-                <script>
-                    var scatterGraph = {{scatter | safe}};
-                    Plotly.plot('bargraph',scatterGraph,{});
                 </script>
             </div>
         </div>
