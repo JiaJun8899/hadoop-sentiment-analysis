@@ -1,16 +1,22 @@
-Matched	True Positive: 30231
-Matched	True Negative: 761
-Matched	True Neutral: 1901
-Matched	False Positive: 2641
-Matched	False Negative: 8175
-Matched	False Neutral: 7801
+Matched	Positive Positive: 30231
+Matched	Negative Negative: 761
+Matched	Neutral Neutral: 1901
+Matched	Positive Negative: 1785
+Matched	Negative Positive: 1751
+Matched	Neutral Positive: 6874
+Matched	Positive Neutral: 6390
+Matched	Negative Neutral: 890
+Matched	Neutral Negative: 927
 Matched	Total: 51510
 Matched	Accuracy: 63.85750339739856
-UnMatched	True Positive: 32035
-UnMatched	True Negative: 641
-UnMatched	True Neutral: 1289
-UnMatched	False Positive: 2761
-UnMatched	False Negative: 6371
-UnMatched	False Neutral: 8413
+UnMatched	Positive Positive: 32035
+UnMatched	Negative Negative: 641
+UnMatched	Neutral Neutral: 1289
+UnMatched	Positive Negative: 1800
+UnMatched	Negative Positive: 2181
+UnMatched	Neutral Positive: 7553
+UnMatched	Positive Neutral: 4571
+UnMatched	Negative Neutral: 580
+UnMatched	Neutral Negative: 860
 UnMatched	Total: 51510
 UnMatched	Accuracy: 65.9386526887983
