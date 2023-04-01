@@ -22,16 +22,21 @@ negativeArrayBPJ = []  # [negative] for barPlotJobs
 neutralArrayBPJ = []   # [neutral] for barPlotJobs
 
 # definitions for sentiments
-senSentiment = []       # sentiments - pos/neg/neutral
+matchedSentiment = []       # matched sentiments - pos/neg/neutral
+unmatchedSentiment = []       # unmatched sentiments - pos/neg/neutral
 summarySentiment = []   # summary of review - first word after \t value
 jobSentiment = []       # job title
 ratingSentiment = []    # rating
 prosSentiment = []      # pros
 consSentiment = []      # cons
 dateSentiment = []      # date
-scoreSentiment = []     # score
+matchedScoreSentiment = []     # matched score
+unmatchedScoreSentiment = []     # unmatched score
 counterSenti = []       # index counter
-allInOne = [counterSenti, dateSentiment, senSentiment, scoreSentiment, ratingSentiment, jobSentiment, summarySentiment, prosSentiment, consSentiment]
+# allInOne = [counterSenti, dateSentiment, matchedSentiment, unmatchedSentiment, matchedScoreSentiment, unmatchedScoreSentiment, ratingSentiment, jobSentiment, summarySentiment, prosSentiment, consSentiment]
+allNegativeSentiments = [[],[],[],[],[],[],[],[],[],[],[]]
+allPositiveSentiments = [[],[],[],[],[],[],[],[],[],[],[]]
+allNeutralSentiments = [[],[],[],[],[],[],[],[],[],[],[]]
 
 # definitions for wordcloud
 sentimentWordCloud = []
@@ -81,20 +86,74 @@ def readBarPlotJobs():
                 negativeArrayBPJ.append(int(fooArray[1].strip()))
 
 def readSentiments():
-    with open(os.path.join(sys.path[0], 'ict2107_flask/sentiment'), 'r') as foo:
+    with open(os.path.join(sys.path[0], 'ict2107_flask/sentiment_raw'), 'r') as foo:
         for i, line in enumerate(foo):
-            fooArray = line.split(",")
-            counterSenti.append(str(i + 1))
-            jobSentiment.append(fooArray[1])
-            ratingSentiment.append(fooArray[2])
-            prosSentiment.append(fooArray[3])
-            consSentiment.append(fooArray[4])
-            dateSentiment.append(fooArray[5])
-            scoreSentiment.append(fooArray[6].removesuffix("\n"))
+            fooArray = line.split("\t")
+            if (fooArray[0] == "negative"):
+                # [counterSenti, dateSentiment, matchedSentiment, unmatchedSentiment, matchedScoreSentiment, unmatchedScoreSentiment, ratingSentiment, jobSentiment, summarySentiment, prosSentiment, consSentiment]
 
-            fooArray = fooArray[0].split("\t")
-            senSentiment.append(fooArray[0])
-            summarySentiment.append(fooArray[1])
+                allNegativeSentiments[2].append(fooArray[0])
+                allNegativeSentiments[3].append(fooArray[1])
+                # matchedSentiment.append(fooArray[0])
+                # unmatchedSentiment.append(fooArray[1])
+
+                # split the last part
+                sentenceArray = fooArray[2].split(",")
+
+                # allNegativeSentiments[0].append(str(i + 1))
+                allNegativeSentiments[0].append(len(allNegativeSentiments[2]))
+                allNegativeSentiments[8].append(sentenceArray[0])
+                allNegativeSentiments[7].append(sentenceArray[1])
+                allNegativeSentiments[6].append(sentenceArray[2])
+                allNegativeSentiments[9].append(sentenceArray[3])
+                allNegativeSentiments[10].append(sentenceArray[4])
+                allNegativeSentiments[1].append(sentenceArray[5])
+                allNegativeSentiments[4].append(sentenceArray[6])
+                allNegativeSentiments[5].append(sentenceArray[7].removesuffix("\n"))
+
+                # counterSenti.append(str(i + 1))
+                # summarySentiment.append(sentenceArray[0])
+                # jobSentiment.append(sentenceArray[1])
+                # ratingSentiment.append(sentenceArray[2])
+                # prosSentiment.append(sentenceArray[3])
+                # consSentiment.append(sentenceArray[4])
+                # dateSentiment.append(sentenceArray[5])
+                # matchedScoreSentiment.append(sentenceArray[6])
+                # unmatchedScoreSentiment.append(sentenceArray[7].removesuffix("\n"))
+                
+            elif (fooArray[0] == "positive"):
+                allPositiveSentiments[2].append(fooArray[0])
+                allPositiveSentiments[3].append(fooArray[1])
+
+                # split the last part
+                sentenceArray = fooArray[2].split(",")
+
+                allPositiveSentiments[0].append(len(allPositiveSentiments[2]))
+                allPositiveSentiments[8].append(sentenceArray[0])
+                allPositiveSentiments[7].append(sentenceArray[1])
+                allPositiveSentiments[6].append(sentenceArray[2])
+                allPositiveSentiments[9].append(sentenceArray[3])
+                allPositiveSentiments[10].append(sentenceArray[4])
+                allPositiveSentiments[1].append(sentenceArray[5])
+                allPositiveSentiments[4].append(sentenceArray[6])
+                allPositiveSentiments[5].append(sentenceArray[7].removesuffix("\n"))
+
+            elif (fooArray[0] == "neutral"):
+                allNeutralSentiments[2].append(fooArray[0])
+                allNeutralSentiments[3].append(fooArray[1])
+
+                # split the last part
+                sentenceArray = fooArray[2].split(",")
+
+                allNeutralSentiments[0].append(len(allNeutralSentiments[2]))
+                allNeutralSentiments[8].append(sentenceArray[0])
+                allNeutralSentiments[7].append(sentenceArray[1])
+                allNeutralSentiments[6].append(sentenceArray[2])
+                allNeutralSentiments[9].append(sentenceArray[3])
+                allNeutralSentiments[10].append(sentenceArray[4])
+                allNeutralSentiments[1].append(sentenceArray[5])
+                allNeutralSentiments[4].append(sentenceArray[6])
+                allNeutralSentiments[5].append(sentenceArray[7].removesuffix("\n"))
 
 
 def readWordCloud():
@@ -139,7 +198,10 @@ class getArrays:
     def getNeutralArrayBPJ(): return neutralArrayBPJ
     
     # For sentiments
-    def getSentiments(): return allInOne
+    # def getSentiments(): return allInOne
+    def getNegativeSentiments(): return allNegativeSentiments
+    def getPositiveSentiments(): return allPositiveSentiments
+    def getNeutralSentiments(): return allNeutralSentiments
 
     # For wordcloud
     def getWordCloud_word(): return werdCloud
@@ -154,10 +216,10 @@ class getArrays:
 @app.route("/", methods=["GET", "POST"])
 def index():
     # read all data at the start
-    readBarPlotYear()   # Reads barPlotYear data and puts it into the arrays
-    readBarPlotJobs()   # Reads barPlotJobs data and puts it into the arrays
+    # readBarPlotYear()   # Reads barPlotYear data and puts it into the arrays
+    # readBarPlotJobs()   # Reads barPlotJobs data and puts it into the arrays
     readSentiments()    # Reads sentiment data and puts it into the arrays
-    readWordCloud()     # Reads wordcloud data and puts it into arrays
+    # readWordCloud()     # Reads wordcloud data and puts it into arrays
 
     # redirect to graph main page
     return redirect("/barPlot/matchedJob", code=302)
