@@ -3,3 +3,4 @@ venv/
 *.pyc
 ict2107-flask/ict2107_flask/__pycache__/__init__.cpython-310.pyc
 ict2107-flask/ict2107_flask/__pycache__/index.cpython-310.pyc
+*__pycache__
