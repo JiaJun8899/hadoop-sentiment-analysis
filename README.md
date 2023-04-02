@@ -1,7 +1,7 @@
 # ict2107-hadoop-project
 
 ### To run the file
-`flask --app ict2107_flask --debug run` in the directory of ict2107-flask
+`flask --app ict2107_flask --debug run` in the directory of "Source Code\ict2107-flask"
 
 ### Libraries needed
 - pip install Flask
