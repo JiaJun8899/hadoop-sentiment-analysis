@@ -1,0 +1,7 @@
+Flask
+plotly
+matplotlib
+pandas
+numpy
+pillow
+wordcloud
