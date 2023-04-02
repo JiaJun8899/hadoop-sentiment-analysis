@@ -58,10 +58,10 @@ True sentiment is based on the user's rating
 Accuracy is comparision of model's sentiment with true sentiment
 
 ### Forced Matching
-<img src = "./matchedconfustionmatrix.png">
+<img src = "./Others/matchedconfustionmatrix.png">
 
 ### Unmatch
-<img src = "./matchedconfustionmatrix.png">
+<img src = "./Others/matchedconfustionmatrix.png">
 
 ## <b>Contributors</b>
 
