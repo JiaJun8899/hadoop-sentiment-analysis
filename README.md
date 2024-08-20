@@ -61,7 +61,7 @@ Accuracy is comparision of model's sentiment with true sentiment
 <img src = "./Others/matchedconfustionmatrix.png">
 
 ### Unmatch
-<img src = "./Others/matchedconfustionmatrix.png">
+<img src = "./Others/unmatchconfusionmatrix.png">
 
 ## <b>Contributors</b>
 
